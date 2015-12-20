@@ -18,11 +18,12 @@ export default class Collection {
 
         function onTransactionError(e) {
           requestErrors.push(e);
+          openDB.close();
           reject(requestErrors);
         }
 
         function onTransactionComplete() {
-          console.log('bla');
+          openDB.close();
           resolve(data._id);
         }
 
@@ -55,11 +56,12 @@ export default class Collection {
 
         function onTransactionError(e) {
           requestErrors.push(e);
+          openDB.close();
           reject(requestErrors);
         }
 
         function onTransactionComplete() {
-          console.log('bla');
+          openDB.close();
           resolve();
         }
 
@@ -83,7 +85,13 @@ export default class Collection {
     return IndexedDB.open(this.dbName, this.dbCollections).then((openDB) => {
       const transaction = IndexedDB.createReadTransaction(openDB, [this.collectionName]);
       const objectStore = transaction.objectStore(this.collectionName);
-      return IndexedDB.getAll(objectStore);
+      return IndexedDB.getAll(objectStore).then((data) => {
+        openDB.clos();
+        return data;
+      }).catch((err) => {
+        openDB.clos();
+        return err;
+      });
     });
   }
 
@@ -91,7 +99,13 @@ export default class Collection {
     return IndexedDB.open(this.dbName, this.dbCollections).then((openDB) => {
       const transaction = IndexedDB.createReadTransaction(openDB, [this.collectionName]);
       const objectStore = transaction.objectStore(this.collectionName);
-      return IndexedDB.getOne(objectStore, id);
+      return IndexedDB.getOne(objectStore, id).then((data) => {
+        openDB.close();
+        return data;
+      }).catch((err) => {
+        openDB.close();
+        return err;
+      });
     });
   }
 }

@@ -9,35 +9,43 @@ export default function upload(dbName, collectionNames) {
     IndexedDB.open(dbName, collectionNames).then((openDB) => {
       const transaction = IndexedDB.createReadTransaction(openDB, [CHANGES_DB_STORE_NAME]);
       const objectStore = transaction.objectStore(CHANGES_DB_STORE_NAME);
-      return IndexedDB.getAll(objectStore);
+      return IndexedDB.getAll(objectStore),then((data) => {
+        openDB.close();
+        return data;
+      }).catch((err) => {
+        openDB.close();
+        reject(err);
+      });
     }).then((changeObjects) => {
       return post(API_V1_UPLOAD, {changes: changeObjects});
     }).then((resp) => {
-      const requestErrors = [];
+      IndexedDB.open(dbName, collectionNames).then((openDB) => {
+        const requestErrors = [];
 
-      function onTransactionError(e) {
-        requestErrors.push(e);
-        reject(requestErrors);
-      }
+        function onTransactionError(e) {
+          openDB.close();
+          requestErrors.push(e);
+          reject(requestErrors);
+        }
 
-      function onTransactionComplete() {
-        console.log('bla');
-        resolve();
-      }
+        function onTransactionComplete() {
+          openDB.close();
+          resolve();
+        }
 
-      // TODO: reopen DB
-      const transaction = IndexedDB.createReadWriteTransaction(openDB, [CHANGES_DB_STORE_NAME], onTransactionComplete, onTransactionError);
-      const objectStore = transaction.objectStore(CHANGES_DB_STORE_NAME);
-      const {changeIds, lastUpdateTS} = resp;
+        const transaction = IndexedDB.createReadWriteTransaction(openDB, [CHANGES_DB_STORE_NAME], onTransactionComplete, onTransactionError);
+        const objectStore = transaction.objectStore(CHANGES_DB_STORE_NAME);
+        const {changeIds, lastUpdateTS} = resp;
 
-      const promises = changeIds.map((id) => {
-        return IndexedDB.remove(objectStore, id);
-      });
+        const promises = changeIds.map((id) => {
+          return IndexedDB.remove(objectStore, id);
+        });
 
-      Promise.all(promises).then(() => {
-        localStorage.setItem(LAST_UPDATE_TS, lastUpdateTS);
-      }).catch((e) => {
-        requestErrors.push(e);
+        Promise.all(promises).then(() => {
+          localStorage.setItem(LAST_UPDATE_TS, lastUpdateTS);
+        }).catch((e) => {
+          requestErrors.push(e);
+        });
       });
     }).catch((err) => {
       console.log(err);

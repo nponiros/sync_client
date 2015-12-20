@@ -2,7 +2,6 @@ import {IDBTransactionModes} from './constants.js';
 
 const version = 1;
 
-// TODO: close function
 export function open(dbName, dbStoreNames) {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(dbName, version);
