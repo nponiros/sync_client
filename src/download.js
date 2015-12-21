@@ -4,7 +4,7 @@ import * as IndexedDB from './indexeddb_connector.js';
 
 import {post} from './ajax.js';
 
-export function download(dbName, collectionNames) {
+export default function download(dbName, collectionNames) {
 // TODO: better names for the data we send
 // could be undefined
   const lastUpdateTS = localStorage.getItem(LAST_UPDATE_TS);
