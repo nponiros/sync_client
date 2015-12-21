@@ -14,7 +14,7 @@ class MockObjectStore {
     this.request = {};
     if (isErrorMock) {
       Object.defineProperty(this.request, 'onerror', {
-        set: function (cb) {
+        set(cb) {
           setTimeout(() => {
             cb(Error('Some error'));
           }, 0);
@@ -22,7 +22,7 @@ class MockObjectStore {
       });
     } else {
       Object.defineProperty(this.request, 'onsuccess', {
-        set: function (cb) {
+        set(cb) {
           callDelayedCB(cb, result);
         }
       });
@@ -31,15 +31,15 @@ class MockObjectStore {
     this.isErrorMock = isErrorMock;
   }
 
-  put(data) {
+  put() {
     return this.request;
   }
 
-  delete(id) {
+  delete() {
     return this.request;
   }
 
-  get(id) {
+  get() {
     return this.request;
   }
 
