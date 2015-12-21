@@ -20,8 +20,8 @@ export default class SyncClient {
 
   sync() {
     return new Promise((resolve, reject) => {
-      return uploadFn(this.dbName, this.collectionNames).then(() => {
-        return downloadFn(this.dbName, this.collectionNames);
+      return downloadFn(this.dbName, this.collectionNames).then(() => {
+        return uploadFn(this.dbName, this.collectionNames);
       }).then(() => {
         resolve();
       }).catch(() => {
@@ -30,5 +30,6 @@ export default class SyncClient {
     });
   }
 
-  isOnline() {}
+  isOnline() {
+  }
 }
