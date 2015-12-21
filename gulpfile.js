@@ -13,7 +13,7 @@ const plugins = gulpLoadPlugins({
 });
 
 gulp.task('eslint', () => {
-  return gulp.src('src/**/*.js')
+  return gulp.src(['src/**/*.js', 'test/**/*.js'])
     .pipe(plugins.eslint('eslint.yaml'))
     .pipe(plugins.eslint.format());
 });
