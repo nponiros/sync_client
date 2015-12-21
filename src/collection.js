@@ -5,15 +5,24 @@ import * as IndexedDB from './indexeddb_connector.js';
 import {createUpdateChangeObject, createRemoveChangeObject} from './change_object_helpers.js';
 
 export default class Collection {
-  constructor(collectionName, dbName, dbCollections) {
-    this.collectionName = collectionName;
-    this.dbName = dbName;
-    this.dbCollections = dbCollections;
+  constructor(collectionName, dbName, dbCollectionNames) {
+    const containsCollectionName = dbCollectionNames.indexOf(collectionName);
+    const containsChangeCollectionName = dbCollectionNames.indexOf(CHANGES_DB_STORE_NAME);
+
+    if (containsCollectionName === -1) {
+      throw Error('Collection name is not in the collections list');
+    } else if (containsChangeCollectionName === -1) {
+      throw Error('Change collection is not in the collections list');
+    } else {
+      this.collectionName = collectionName;
+      this.dbName = dbName;
+      this.dbCollectionNames = dbCollectionNames;
+    }
   }
 
   save(data) {
     return new Promise((resolve, reject) => {
-      IndexedDB.open(this.dbName, this.dbCollections).then((openDB) => {
+      IndexedDB.open(this.dbName, this.dbCollectionNames).then((openDB) => {
         const requestErrors = [];
 
         function onTransactionError(e) {
@@ -51,7 +60,7 @@ export default class Collection {
 
   remove(id) {
     return new Promise((resolve, reject) => {
-      IndexedDB.open(this.dbName, this.dbCollections).then((openDB) => {
+      IndexedDB.open(this.dbName, this.dbCollectionNames).then((openDB) => {
         const requestErrors = [];
 
         function onTransactionError(e) {
@@ -82,21 +91,21 @@ export default class Collection {
   }
 
   getAll() {
-    return IndexedDB.open(this.dbName, this.dbCollections).then((openDB) => {
+    return IndexedDB.open(this.dbName, this.dbCollectionNames).then((openDB) => {
       const transaction = IndexedDB.createReadTransaction(openDB, [this.collectionName]);
       const objectStore = transaction.objectStore(this.collectionName);
       return IndexedDB.getAll(objectStore).then((data) => {
-        openDB.clos();
+        openDB.close();
         return data;
       }).catch((err) => {
-        openDB.clos();
-        return err;
+        openDB.close();
+        return Promise.reject(err);
       });
     });
   }
 
   getOne(id) {
-    return IndexedDB.open(this.dbName, this.dbCollections).then((openDB) => {
+    return IndexedDB.open(this.dbName, this.dbCollectionNames).then((openDB) => {
       const transaction = IndexedDB.createReadTransaction(openDB, [this.collectionName]);
       const objectStore = transaction.objectStore(this.collectionName);
       return IndexedDB.getOne(objectStore, id).then((data) => {
@@ -104,7 +113,7 @@ export default class Collection {
         return data;
       }).catch((err) => {
         openDB.close();
-        return err;
+        return Promise.reject(err);
       });
     });
   }
