@@ -1,6 +1,6 @@
 import * as db from '../../src/indexeddb_connector.js';
-import * as Mocks from '../object_store_mock.js';
 import {IDBTransactionModes} from '../../src/constants.js';
+import * as DBMock from '../indexeddb_mock.js';
 
 describe('IndexedDB Connector', () => {
   describe('open', () => {
@@ -24,7 +24,9 @@ describe('IndexedDB Connector', () => {
       const data = {
         _id: 1
       };
-      const objectStore = new Mocks.ObjectStore();
+      const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
+      const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_WRITE);
+      const objectStore = trans.objectStore('testStore');
       db.save(objectStore, data).then((id) => {
         expect(id).toBe(1);
         done();
@@ -35,8 +37,17 @@ describe('IndexedDB Connector', () => {
       const data = {
         _id: 1
       };
-      const objectStore = new Mocks.ErrorObjectStore();
-      db.save(objectStore, data).catch((err) => {
+      const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
+      dbMock.setFlags({
+        request: {
+          onError: true
+        }
+      });
+      const trans = dbMock.transaction('testStore', IDBTransactionModes.READ_WRITE);
+      const objectStore = trans.objectStore('testStore');
+      db.save(objectStore, data).then(() => {
+        done.fail();
+      }).catch((err) => {
         expect(err).not.toBe(undefined);
         done();
       });
@@ -46,7 +57,9 @@ describe('IndexedDB Connector', () => {
   describe('remove', () => {
     it('should not return anything', (done) => {
       const id = 1;
-      const objectStore = new Mocks.ObjectStore();
+      const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
+      const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_WRITE);
+      const objectStore = trans.objectStore('testStore');
       db.remove(objectStore, id).then((returnId) => {
         expect(returnId).toBe(undefined);
         done();
@@ -55,7 +68,14 @@ describe('IndexedDB Connector', () => {
 
     it('should return an error object if the error callback gets called', (done) => {
       const id = 1;
-      const objectStore = new Mocks.ErrorObjectStore();
+      const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
+      dbMock.setFlags({
+        request: {
+          onError: true
+        }
+      });
+      const trans = dbMock.transaction('testStore', IDBTransactionModes.READ_ONLY);
+      const objectStore = trans.objectStore('testStore');
       db.remove(objectStore, id).catch((err) => {
         expect(err).not.toBe(undefined);
         done();
@@ -68,16 +88,32 @@ describe('IndexedDB Connector', () => {
       const testData = {
         _id: 1
       };
-      const objectStore = new Mocks.ObjectStore(testData);
+      const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
+      dbMock.setData({
+        testStore: {
+          1: testData
+        }
+      });
+      const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_ONLY);
+      const objectStore = trans.objectStore('testStore');
       db.getOne(objectStore, testData._id).then((data) => {
         expect(data).toEqual(testData);
         done();
+      }).catch((err) => {
+        done.fail(err);
       });
     });
 
     it('should return an error object if the error callback gets called', (done) => {
       const id = 1;
-      const objectStore = new Mocks.ErrorObjectStore();
+      const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
+      dbMock.setFlags({
+        request: {
+          onError: true
+        }
+      });
+      const trans = dbMock.transaction('testStore', IDBTransactionModes.READ_ONLY);
+      const objectStore = trans.objectStore('testStore');
       db.getOne(objectStore, id).catch((err) => {
         expect(err).not.toBe(undefined);
         done();
@@ -92,17 +128,35 @@ describe('IndexedDB Connector', () => {
       }, {
         _id: 2
       }];
-      const objectStore = new Mocks.ObjectStore(testData);
+      const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
+      dbMock.setData({
+        testStore: {
+          1: testData[0],
+          2: testData[1]
+        }
+      });
+      const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_ONLY);
+      const objectStore = trans.objectStore('testStore');
       db.getAll(objectStore).then((data) => {
         expect(data).toEqual(testData);
         done();
+      }).catch((err) => {
+        done.fail(err);
       });
     });
 
     it('should return an error object if the error callback gets called', (done) => {
-      const id = 1;
-      const objectStore = new Mocks.ErrorObjectStore();
-      db.getAll(objectStore, id).catch((err) => {
+      const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
+      dbMock.setFlags({
+        request: {
+          onError: true
+        }
+      });
+      const trans = dbMock.transaction('testStore', IDBTransactionModes.READ_ONLY);
+      const objectStore = trans.objectStore('testStore');
+      db.getAll(objectStore).then(() => {
+        done.fail();
+      }).catch((err) => {
         expect(err).not.toBe(undefined);
         done();
       });

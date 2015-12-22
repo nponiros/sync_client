@@ -11,7 +11,7 @@ module.exports = function(config) {
       'karma-jasmine'
     ],
     browsers: ['Chrome'],
-    files: ['test/object_store_mock.js', 'src/**/*.js', 'test/unit/*_spec.js'],
+    files: ['test/indexeddb_mock.js', 'src/**/*.js', 'test/unit/*_spec.js'],
     preprocessors: {
       'src/**/*.js': ['babel', 'commonjs'],
       'test/**/*.js': ['babel', 'commonjs']
