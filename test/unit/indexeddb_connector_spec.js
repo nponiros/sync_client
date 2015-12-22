@@ -43,7 +43,7 @@ describe('IndexedDB Connector', () => {
           onError: true
         }
       });
-      const trans = dbMock.transaction('testStore', IDBTransactionModes.READ_WRITE);
+      const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_WRITE);
       const objectStore = trans.objectStore('testStore');
       db.save(objectStore, data).then(() => {
         done.fail();
@@ -74,7 +74,7 @@ describe('IndexedDB Connector', () => {
           onError: true
         }
       });
-      const trans = dbMock.transaction('testStore', IDBTransactionModes.READ_ONLY);
+      const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_ONLY);
       const objectStore = trans.objectStore('testStore');
       db.remove(objectStore, id).catch((err) => {
         expect(err).not.toBe(undefined);
@@ -112,7 +112,7 @@ describe('IndexedDB Connector', () => {
           onError: true
         }
       });
-      const trans = dbMock.transaction('testStore', IDBTransactionModes.READ_ONLY);
+      const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_ONLY);
       const objectStore = trans.objectStore('testStore');
       db.getOne(objectStore, id).catch((err) => {
         expect(err).not.toBe(undefined);
@@ -152,7 +152,7 @@ describe('IndexedDB Connector', () => {
           onError: true
         }
       });
-      const trans = dbMock.transaction('testStore', IDBTransactionModes.READ_ONLY);
+      const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_ONLY);
       const objectStore = trans.objectStore('testStore');
       db.getAll(objectStore).then(() => {
         done.fail();

@@ -13,13 +13,6 @@ describe('Collection', () => {
   const collectionName = 'testCollection';
   const dbName = 'testDB';
   const collectionNames = [collectionName, CHANGES_DB_STORE_NAME];
-  let openDB;
-
-  beforeEach(() => {
-    openDB = new DBMock.IDBDatabase(dbName, collectionNames);
-    spyOn(openDB, 'close');
-    spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
-  });
 
   describe('constructor', () => {
     it('should set the database name, collection name and a list of database collections', () => {
@@ -56,8 +49,12 @@ describe('Collection', () => {
 
   describe('save', () => {
     let collection;
+    let openDB;
 
     beforeEach(() => {
+      openDB = new DBMock.IDBDatabase(dbName, collectionNames);
+      spyOn(openDB, 'close');
+      spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
       collection = new Collection(collectionName, dbName, collectionNames);
       spyOn(db, 'save').and.callThrough();
       spyOn(db, 'createReadWriteTransaction').and.callThrough();
@@ -119,8 +116,12 @@ describe('Collection', () => {
 
   describe('remove', () => {
     let collection;
+    let openDB;
 
     beforeEach(() => {
+      openDB = new DBMock.IDBDatabase(dbName, collectionNames);
+      spyOn(openDB, 'close');
+      spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
       collection = new Collection(collectionName, dbName, collectionNames);
       spyOn(db, 'save').and.callThrough();
       spyOn(db, 'remove').and.callThrough();
@@ -165,8 +166,12 @@ describe('Collection', () => {
 
   describe('getAll', () => {
     let collection;
+    let openDB;
 
     beforeEach(() => {
+      openDB = new DBMock.IDBDatabase(dbName, collectionNames);
+      spyOn(openDB, 'close');
+      spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
       collection = new Collection(collectionName, dbName, collectionNames);
       spyOn(db, 'createReadTransaction').and.callThrough();
     });
@@ -211,9 +216,13 @@ describe('Collection', () => {
 
   describe('getOne', () => {
     let collection;
+    let openDB;
     const id = 1;
 
     beforeEach(() => {
+      openDB = new DBMock.IDBDatabase(dbName, collectionNames);
+      spyOn(openDB, 'close');
+      spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
       collection = new Collection(collectionName, dbName, collectionNames);
       spyOn(db, 'createReadTransaction').and.callThrough();
     });
