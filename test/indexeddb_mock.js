@@ -22,11 +22,15 @@ export class IDBRequest {
     this.internal = {
       flags
     };
+    this._flags = {
+      pending: true,
+      done: false
+    };
   }
 
   exec() {
-    // this.internal.flags.done = true;
-    // this.internal.flags.pending = false;
+    this._flags.done = true;
+    this._flags.pending = false;
     this.readyState = 'done';
     if (this.internal.flags && this.internal.flags.onError) {
       const event = {
@@ -58,13 +62,13 @@ export class IDBCursor {
   constructor(source, internal) {
     this.source = source;
     this.internal = internal;
-    this.internal.position = 1;
+    this._position = 1;
   }
 
   continue() {
-    if (this.internal.position < this.internal.keys.length) {
-      const next = this.internal.data[this.internal.keys[this.internal.position]];
-      this.internal.position = this.internal.position + 1;
+    if (this._position < this.internal.keys.length) {
+      const next = this.internal.data[this.internal.keys[this._position]];
+      this._position = this._position + 1;
       return next;
     } else {
       return null;
@@ -88,15 +92,18 @@ export class IDBCursorWithValue extends IDBCursor {
   }
 }
 
-// TODO check if transaction is active before executing operations on it
 export class IDBObjectStore {
   constructor(transaction, name, internal) {
     this.name = name;
     this.transaction = transaction;
     this.internal = internal;
+    this._flags = {};
   }
 
   put() {
+    if (!this.transaction._flags.active) {
+      throw new DOMException('TransactionInactiveError');
+    }
     // TODO: is the result of put really null?
     const requestFlags = this.internal.flags.request;
     const request = new IDBRequest(this.transaction, this, null, requestFlags);
@@ -105,6 +112,9 @@ export class IDBObjectStore {
   }
 
   delete() {
+    if (!this.transaction._flags.active) {
+      throw new DOMException('TransactionInactiveError');
+    }
     const requestFlags = this.internal.flags.request;
     const request = new IDBRequest(this.transaction, this, undefined, requestFlags);
     this.transaction.internal.requests.push(request);
@@ -112,6 +122,9 @@ export class IDBObjectStore {
   }
 
   get(id) {
+    if (!this.transaction._flags.active) {
+      throw new DOMException('TransactionInactiveError');
+    }
     const requestFlags = this.internal.flags.request;
     const value = this.internal.data[id];
     const request = new IDBRequest(this.transaction, this, value, requestFlags);
@@ -121,12 +134,15 @@ export class IDBObjectStore {
 
 // TODO range and direction
   openCursor() {
+    if (!this.transaction._flags.active) {
+      throw new DOMException('TransactionInactiveError');
+    }
     const requestFlags = this.internal.flags.request;
     const request = new IDBRequest(this.transaction, this, undefined, requestFlags);
     this.transaction.internal.requests.push(request);
     const data = this.internal.data;
-    // TODO keys should be sorted
     const keys = Object.keys(data);
+    keys.sort();
     const cursorInternal = {
       keys,
       data,
@@ -144,6 +160,9 @@ export class IDBTransaction {
     this.objectStoreNames = dbStoreNames;
     this.mode = mode;
     this.internal = internal;
+    this._flags = {
+      active: true
+    };
     Object.defineProperty(this, 'oncomplete', {
       set(cb) {
         self.completeCB = cb;
@@ -161,9 +180,7 @@ export class IDBTransaction {
     });
     setTimeout(() => {
       // Transaction becomes inactive once the event loop takes over
-      internal.flags.transaction = {
-        active: false
-      };
+      this._flags.active = false;
       const requests = this.internal.requests;
       const index = 0;
       let isError = false;
@@ -197,8 +214,9 @@ export class IDBTransaction {
   }
 
   objectStore(name) {
-    // TODO InvalidStateError
-    if (this.objectStoreNames.indexOf(name) === -1) {
+    if (!this._flags.active) {
+      throw new DOMException('InvalidStateError');
+    } else if (this.objectStoreNames.indexOf(name) === -1) {
       throw new DOMException('NotFoundError');
     }
     const data = this.internal.data[name];
@@ -211,6 +229,7 @@ export class IDBTransaction {
 }
 
 // TODO flags is too complicated
+// TODO need also flags set by indexeddb itself
 export class IDBDatabase {
   constructor(name, objectStoreNames) {
     this.name = name;
@@ -220,28 +239,36 @@ export class IDBDatabase {
       data: {},
       flags: {}
     };
+    this._flags = {
+      isClosed: false
+    };
   }
 
   close() {
     if (this.internal.flags && this.internal.flags.db) {
-      this.internal.flags.db.isClosed = true;
+      this._flags.isClosed = true;
     } else {
-      this.internal.flags = {
-        db: {
-          isClosed: true
-        }
-      };
+      this._flags.isClosed = true;
     }
   }
 
   transaction(dbStoreNames, mode) {
-    // TODO: mode error TypeError
-    // TODO: dbStoreNames must be in objectStoreNames NotFoundError
+    mode = mode || 'readonly';
     if (dbStoreNames.length === 0) {
       throw new DOMException('InvalidAccessError');
-    } else if (this.internal.flags && this.internal.flags.db && this.internal.flags.db.isClosed) {
+    } else if (this._flags.isClosed) {
       throw new DOMException('InvalidStateError');
+    } else if (mode !== 'readonly' && mode !== 'readwrite' && mode !== 'versionchange') {
+      throw new DOMException('TypeError');
+    } else {
+      for (let i = 0; i < dbStoreNames.length; i++) {
+        const storeName = dbStoreNames[i];
+        if (this.objectStoreNames.indexOf(storeName) === -1) {
+          throw new DOMException('NotFoundError');
+        }
+      }
     }
+
     return new IDBTransaction(this, dbStoreNames, mode, this.internal);
   }
 
