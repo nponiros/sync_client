@@ -5,7 +5,8 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'syncClient.min.js',
-    libraryTarget: 'commonjs'
+    libraryTarget: 'commonjs2',
+    library: true
   },
   module: {
     loaders: [
