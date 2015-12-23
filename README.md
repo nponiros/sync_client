@@ -4,16 +4,42 @@ This module can be used to write data to IndexedDB and later call a synchronizat
 
 ## API
 
+### SyncClient 
 
-    
+* constructor(dbName, collectionNames, serverUrl)
+  * dbName: the name of the indexedDB database
+  * collectionNames: the names of the object store we would like to have in the database
+  * serverUrl: Protocol + Domain + Port (if needed) for the synchronization functions. The actual API path is automatically added
+    * API Paths: for upload: /api/v1/upload, for download: /api/v1/download
+  * returns a SyncClient instance
+* getCollection(collectionName)
+  * collectionName: the name of the collection we want to get. Must be one of the collectionNames given to the constructor
+  * returns a Collection
+* sync()
+  * returns a Promise
+  * Description: calls upload and download functions to send data to the server and receive new data from the server.
+  
+### Collection
+
+* save(data)
+  * data: the data to save in the collection
+  * returns Promise which resolves with the \_id property of the data or rejects with an array of errors
+  * Description: Can be used to add and update data in the database. For a data update, the given data object needs the \_id property. For data objects without \_id, an id will be set automatically
+* remove(id)
+  * id: the id of the data object to delete
+  * returns Promise which resolves with undefined or rejects with an array of errors
+* getAll()
+  * returns Promise which resolves with the data of a given collection or rejects with an error
+* getOne(id)
+  * id: the \_id property of a data object in the database
+  * returns Promise which resolves with the data object or rejects with an error
+
 ## TODO
 * What happens if the db fails to open?
 * Test onabort -> make something fail by not passing an id
 * Test onerror for transaction
 * Check what errors are thrown and what is called via onerror -> error control, catch is missing
 * Some functions could throw an exception -> need to abort the transaction
-* Tests
-* Improve docu
 * Offer API function for online/offline check
-* Download/Upload is not working yet
 * Online check not working
+* Integration Tests
