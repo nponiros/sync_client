@@ -32,19 +32,23 @@ export default function download(dbName, collectionNames, serverUrl) {
           resolve();
         }
 
+        function execOperation(changeObject, objectStore) {
+          if (changeObject.operation === DELETE_OPERATION) {
+            return IndexedDB.remove(objectStore, changeObject._id);
+          } else if (changeObject.operation === UPDATE_OPERATION) {
+            return IndexedDB.save(objectStore, changeObject.changeSet);
+          } else {
+            return Promise.reject('Operation does not exist');
+          }
+        }
+
         const transaction = IndexedDB.createReadWriteTransaction(openDB, Array.from(changes.keys()), onTransactionComplete, onTransactionError);
         const promises = [];
-        for (let [collectionName, changeObjects] of changes) {
+        for (const [collectionName, changeObjects] of changes) {
           const objectStore = transaction.objectStore(collectionName);
-          changeObjects.forEach((changeObject) => {
-            if (changeObject.operation === DELETE_OPERATION) {
-              promises.push(IndexedDB.remove(objectStore, changeObject._id));
-            } else if (changeObject.operation === UPDATE_OPERATION) {
-              promises.push(IndexedDB.save(objectStore, changeObject.changeSet));
-            } else {
-              promises.push(Promise.reject('Operation does not exist'));
-            }
-          });
+          for (const changeObject of changeObjects) {
+            promises.push(execOperation(changeObject, objectStore));
+          }
         }
         Promise.all(promises).catch((err) => {
           requestErrors.push(err);
