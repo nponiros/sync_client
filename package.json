@@ -10,7 +10,7 @@
     "url": "https://github.com/nponiros/sync_client.git"
   },
   "devDependencies": {
-    "babel-core": "6.3.21",
+    "babel-core": "6.3.26",
     "babel-loader": "6.2.0",
     "babel-preset-es2015": "6.3.13",
     "gulp": "3.9.0",
