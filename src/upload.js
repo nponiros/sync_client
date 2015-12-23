@@ -3,7 +3,7 @@ import * as IndexedDB from './indexeddb_connector.js';
 
 import {post} from './ajax.js';
 
-export default function upload(dbName, collectionNames) {
+export default function upload(dbName, collectionNames, serverUrl) {
 // Server always has the change of the last client which synced -> changes could be overwritten
   return new Promise((resolve, reject) => {
     IndexedDB.open(dbName, collectionNames).then((openDB) => {
@@ -17,7 +17,7 @@ export default function upload(dbName, collectionNames) {
         reject(err);
       });
     }).then((changeObjects) => {
-      return post(API_V1_UPLOAD, {changes: changeObjects});
+      return post(`${serverUrl}${API_V1_UPLOAD}`, {changes: changeObjects});
     }).then((resp) => {
       IndexedDB.open(dbName, collectionNames).then((openDB) => {
         const requestErrors = [];

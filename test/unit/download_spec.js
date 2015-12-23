@@ -14,6 +14,7 @@ describe('download', () => {
   const collectionName = 'testCollection';
   const dbName = 'testDB';
   const collectionNames = [collectionName, CHANGES_DB_STORE_NAME];
+  const serverUrl = '';
 
   let openDB;
 
@@ -43,7 +44,7 @@ describe('download', () => {
       }
     }];
     spyOn(ajax, 'post').and.returnValue(getResolvePromise({changes: changeObjects}));
-    download(dbName, collectionNames).then(() => {
+    download(dbName, collectionNames, serverUrl).then(() => {
       expect(db.open).toHaveBeenCalledWith(dbName, collectionNames);
       expect(db.createReadWriteTransaction.calls.first().args[0]).toEqual(openDB);
       expect(db.createReadWriteTransaction.calls.first().args[1]).toEqual([collectionName]);
@@ -74,7 +75,7 @@ describe('download', () => {
       }
     }];
     spyOn(ajax, 'post').and.returnValue(getResolvePromise({changes: changeObjects}));
-    download(dbName, collectionNames).then(() => {
+    download(dbName, collectionNames, serverUrl).then(() => {
       expect(localStorage.getItem).toHaveBeenCalledWith(LAST_UPDATE_TS);
       done();
     }).catch((err) => {

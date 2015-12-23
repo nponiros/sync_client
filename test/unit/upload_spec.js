@@ -14,6 +14,7 @@ describe('upload', () => {
   const collectionName = 'testCollection';
   const dbName = 'testDB';
   const collectionNames = [collectionName, CHANGES_DB_STORE_NAME];
+  const serverUrl = '';
 
   let openDB;
 
@@ -43,7 +44,7 @@ describe('upload', () => {
       }
     });
     spyOn(ajax, 'post').and.returnValue({lastUpdateTS: 1, changeIds: [1, 2]});
-    upload(dbName, collectionNames).then(() => {
+    upload(dbName, collectionNames, serverUrl).then(() => {
       expect(db.open).toHaveBeenCalledWith(dbName, collectionNames);
       expect(db.createReadTransaction).toHaveBeenCalledWith(openDB, [CHANGES_DB_STORE_NAME]);
       expect(db.createReadWriteTransaction.calls.first().args[0]).toEqual(openDB);
@@ -74,7 +75,7 @@ describe('upload', () => {
     });
     const lastUpdateTS = 1;
     spyOn(ajax, 'post').and.returnValue({lastUpdateTS, changeIds: [1, 2]});
-    upload(dbName, collectionNames).then(() => {
+    upload(dbName, collectionNames, serverUrl).then(() => {
       expect(localStorage.setItem).toHaveBeenCalledWith(LAST_UPDATE_TS, 1);
       done();
     }).catch((err) => {
