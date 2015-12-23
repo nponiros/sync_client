@@ -9,7 +9,7 @@ export default function upload(dbName, collectionNames) {
     IndexedDB.open(dbName, collectionNames).then((openDB) => {
       const transaction = IndexedDB.createReadTransaction(openDB, [CHANGES_DB_STORE_NAME]);
       const objectStore = transaction.objectStore(CHANGES_DB_STORE_NAME);
-      return IndexedDB.getAll(objectStore),then((data) => {
+      return IndexedDB.getAll(objectStore).then((data) => {
         openDB.close();
         return data;
       }).catch((err) => {
