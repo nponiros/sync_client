@@ -1,29 +1,57 @@
-import {API_V1_DOWNLOAD, LAST_UPDATE_TS} from './constants.js';
+import {API_V1_DOWNLOAD, LAST_UPDATE_TS, UPDATE_OPERATION, DELETE_OPERATION} from './constants.js';
 
 import * as IndexedDB from './indexeddb_connector.js';
 
 import {post} from './ajax.js';
 
 export default function download(dbName, collectionNames) {
-// TODO: better names for the data we send
-// could be undefined
-  const lastUpdateTS = localStorage.getItem(LAST_UPDATE_TS);
-  post(API_V1_DOWNLOAD, {lastUpdateTS, collectionNames}).then((resp) => {
-    const changes = resp.changes;
-    // TODO: don't like this yet
-    const maping = {};
-    changes.forEach(function(change) {
-      maping[change.collection] = change.changeSets;
+  return new Promise((resolve, reject) => {
+    const lastUpdateTS = localStorage.getItem(LAST_UPDATE_TS);
+    post(API_V1_DOWNLOAD, {lastUpdateTS, collectionNames}).then((resp) => {
+      const changes = new Map();
+      resp.changes.forEach((change) => {
+        if (changes.has(change.collectionName)) {
+          changes.get(change.collectionName).push(change);
+        } else {
+          changes.set(change.collectionName, [change]);
+        }
+      });
+      return changes;
+    }).then((changes) => {
+      IndexedDB.open(dbName, collectionNames).then((openDB) => {
+        const requestErrors = [];
+
+        function onTransactionError(e) {
+          openDB.close();
+          requestErrors.push(e);
+          reject(requestErrors);
+        }
+
+        function onTransactionComplete() {
+          openDB.close();
+          resolve();
+        }
+
+        const transaction = IndexedDB.createReadWriteTransaction(openDB, Array.from(changes.keys()), onTransactionComplete, onTransactionError);
+        const promises = [];
+        for (let [collectionName, changeObjects] of changes) {
+          const objectStore = transaction.objectStore(collectionName);
+          changeObjects.forEach((changeObject) => {
+            if (changeObject.operation === DELETE_OPERATION) {
+              promises.push(IndexedDB.remove(objectStore, changeObject._id));
+            } else if (changeObject.operation === UPDATE_OPERATION) {
+              promises.push(IndexedDB.save(objectStore, changeObject.changeSet));
+            } else {
+              promises.push(Promise.reject('Operation does not exist'));
+            }
+          });
+        }
+        Promise.all(promises).catch((err) => {
+          requestErrors.push(err);
+        });
+      });
+    }).catch((err) => {
+      reject(err);
     });
-    return maping;
-  }).then((maping) => {
-    var collections = Object.keys(maping);
-    // TODO: save/delete distinguish
   });
-  // Download only needs the real collections but without changeset generation
-  // could use same collections as now with parameters to define if changeset needs creating
-// need a transaction for all changes at once
-
-  // Download: need a lastUpdateTS (get from localStore) and all collections, download all changes newer than lastUpdateTS and save to DB
-
 }
