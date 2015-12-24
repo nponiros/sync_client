@@ -23,6 +23,7 @@
     "karma-chrome-launcher": "^0.2.2",
     "karma-commonjs": "0.0.13",
     "karma-jasmine": "0.3.6",
+    "karma-jasmine-ajax": "0.1.13",
     "webpack": "1.12.9"
   },
   "scripts": {

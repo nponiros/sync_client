@@ -1,14 +1,15 @@
 module.exports = function(config) {
   config.set({
     basePath: '.',
-    frameworks: ['jasmine', 'commonjs'],
+    frameworks: ['jasmine-ajax', 'jasmine', 'commonjs'],
     singleRun: true,
     captureConsole: true,
     plugins: [
       'karma-babel-preprocessor',
       'karma-commonjs',
       'karma-chrome-launcher',
-      'karma-jasmine'
+      'karma-jasmine',
+      'karma-jasmine-ajax'
     ],
     browsers: ['Chrome'],
     files: ['test/indexeddb_mock.js', 'src/**/*.js', 'test/unit/*_spec.js'],
