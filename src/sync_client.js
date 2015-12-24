@@ -32,7 +32,4 @@ export default class SyncClient {
       });
     });
   }
-
-  isOnline() {
-  }
 }
