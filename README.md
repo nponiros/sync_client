@@ -23,11 +23,11 @@ This module can be used to write data to IndexedDB and later call a synchronizat
 
 * save(data)
   * data: the data to save in the collection
-  * returns Promise which resolves with the \_id property of the data or rejects with an array of errors
+  * returns Promise which resolves with the \_id property of the data or rejects with an error
   * Description: Can be used to add and update data in the database. For a data update, the given data object needs the \_id property. For data objects without \_id, an id will be set automatically
 * remove(id)
   * id: the id of the data object to delete
-  * returns Promise which resolves with undefined or rejects with an array of errors
+  * returns Promise which resolves with undefined or rejects with an error
 * getAll()
   * returns Promise which resolves with the data of a given collection or rejects with an error
 * getOne(id)
@@ -35,11 +35,7 @@ This module can be used to write data to IndexedDB and later call a synchronizat
   * returns Promise which resolves with the data object or rejects with an error
 
 ## TODO
-* What happens if the db fails to open?
-* Test onabort -> make something fail by not passing an id
-* Test onerror for transaction
-* Check what errors are thrown and what is called via onerror -> error control, catch is missing
-* Some functions could throw an exception -> need to abort the transaction
-* Offer API function for online/offline check
-* Online check not working
-* Integration Tests
+* What to do with a change object if we delete an element which does not exist
+* Add test coverage
+* Take a look at object store's getAll() function
+* Integration tests for sync()
