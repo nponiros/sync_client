@@ -70,10 +70,10 @@ describe('Collection', () => {
         expect(db.createReadWriteTransaction.calls.first().args[1]).toEqual([CHANGES_DB_STORE_NAME, collectionName]);
         expect(typeof db.createReadWriteTransaction.calls.first().args[2]).toBe('function');
         expect(typeof db.createReadWriteTransaction.calls.first().args[3]).toBe('function');
-        expect(db.save.calls.argsFor(0)[0].name).toEqual(CHANGES_DB_STORE_NAME);
-        expect(db.save.calls.argsFor(0)[1].operation).toBe(UPDATE_OPERATION);
-        expect(db.save.calls.argsFor(1)[0].name).toEqual(collectionName);
-        expect(db.save.calls.argsFor(1)[1]).toEqual(data);
+        expect(db.save.calls.argsFor(0)[0].name).toEqual(collectionName);
+        expect(db.save.calls.argsFor(0)[1]).toEqual(data);
+        expect(db.save.calls.argsFor(1)[0].name).toEqual(CHANGES_DB_STORE_NAME);
+        expect(db.save.calls.argsFor(1)[1].operation).toBe(UPDATE_OPERATION);
         expect(openDB.close).toHaveBeenCalled();
         expect(result).toBe(data._id);
         done();
@@ -92,24 +92,6 @@ describe('Collection', () => {
         done();
       }).catch((err) => {
         done.fail(err);
-      });
-    });
-
-    it('should return an array with errors if some error occured', (done) => {
-      const data = {
-        _id: 1
-      };
-      openDB.setFlags({
-        request: {
-          onError: true
-        }
-      });
-      collection.save(data).then(() => {
-        done.fail();
-      }).catch((errors) => {
-        expect(errors.length).toBe(2);
-        expect(openDB.close).toHaveBeenCalled();
-        done();
       });
     });
   });
@@ -144,22 +126,6 @@ describe('Collection', () => {
         done();
       }).catch((err) => {
         done.fail(err);
-      });
-    });
-
-    it('should return an array with errors if some error occured', (done) => {
-      const id = 1;
-      openDB.setFlags({
-        request: {
-          onError: true
-        }
-      });
-      collection.remove(id).then(() => {
-        done.fail();
-      }).catch((errors) => {
-        expect(errors.length).toBe(2);
-        expect(openDB.close).toHaveBeenCalled();
-        done();
       });
     });
   });
