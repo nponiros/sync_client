@@ -8,9 +8,10 @@ module.exports = function(config) {
       'karma-babel-preprocessor',
       'karma-commonjs',
       'karma-chrome-launcher',
+      'karma-firefox-launcher',
       'karma-jasmine'
     ],
-    browsers: ['Chrome'],
+    browsers: ['Chrome', 'Firefox'],
     files: ['dist/syncClient.min.js', 'test/integration/*_spec.js'],
     preprocessors: {
       'dist/syncClient.min.js': ['commonjs'],

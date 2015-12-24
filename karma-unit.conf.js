@@ -8,10 +8,11 @@ module.exports = function(config) {
       'karma-babel-preprocessor',
       'karma-commonjs',
       'karma-chrome-launcher',
+      'karma-firefox-launcher',
       'karma-jasmine',
       'karma-jasmine-ajax'
     ],
-    browsers: ['Chrome'],
+    browsers: ['Chrome', 'Firefox'],
     files: ['test/indexeddb_mock.js', 'src/**/*.js', 'test/unit/*_spec.js'],
     preprocessors: {
       'src/**/*.js': ['babel', 'commonjs'],
