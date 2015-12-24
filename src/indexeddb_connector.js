@@ -28,7 +28,6 @@ export function open(dbName, dbStoreNames) {
       resolve(db);
     };
 
-    // Insert error
     request.onerror = function(e) {
       reject(e);
     };
@@ -81,13 +80,13 @@ export function getAll(objectStore) {
 
 export function getOne(objectStore, id) {
   return new Promise((resolve, reject) => {
-    const requestUpdate = objectStore.get(id);
+    const request = objectStore.get(id);
 
-    requestUpdate.onsuccess = function(e) {
+    request.onsuccess = function(e) {
       resolve(e.target.result);
     };
 
-    requestUpdate.onerror = function(e) {
+    request.onerror = function(e) {
       reject(e);
     };
   });
@@ -95,13 +94,13 @@ export function getOne(objectStore, id) {
 
 export function remove(objectStore, id) {
   return new Promise((resolve, reject) => {
-    const requestUpdate = objectStore.delete(id);
+    const request = objectStore.delete(id);
 
-    requestUpdate.onsuccess = function() {
+    request.onsuccess = function() {
       resolve();
     };
 
-    requestUpdate.onerror = function(e) {
+    request.onerror = function(e) {
       reject(e);
     };
   });
@@ -109,13 +108,13 @@ export function remove(objectStore, id) {
 
 export function save(objectStore, data) {
   return new Promise((resolve, reject) => {
-    const requestUpdate = objectStore.put(data);
+    const request = objectStore.put(data);
 
-    requestUpdate.onsuccess = function() {
+    request.onsuccess = function() {
       resolve(data._id);
     };
 
-    requestUpdate.onerror = function(e) {
+    request.onerror = function(e) {
       reject(e);
     };
   });
