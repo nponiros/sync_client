@@ -20,7 +20,7 @@ module.exports = function(config) {
       options: {
         presets: ['es2015']
       },
-      sourceFileName: function (file) {
+      sourceFileName: function(file) {
         return file.originalPath;
       }
     }
