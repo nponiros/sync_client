@@ -8,10 +8,12 @@ export default class SyncClient {
     this.collections = new Map();
     this.serverUrl = serverUrl;
     this.dbName = dbName;
-    collectionNames.forEach((collectionName) => {
-      this.collections.set(collectionName, new Collection(collectionName, dbName, collectionNames));
-    });
     collectionNames.push(CHANGES_DB_STORE_NAME);
+    collectionNames.forEach((collectionName) => {
+      if (collectionName !== CHANGES_DB_STORE_NAME) {
+        this.collections.set(collectionName, new Collection(collectionName, dbName, collectionNames));
+      }
+    });
     this.collectionNames = collectionNames;
   }
 

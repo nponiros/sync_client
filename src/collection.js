@@ -22,51 +22,48 @@ export default class Collection {
 
   save(data) {
     return new Promise((resolve, reject) => {
-      IndexedDB.open(this.dbName, this.dbCollectionNames).then((openDB) => {
-        const requestErrors = [];
+      if (data === undefined) {
+        reject(new TypeError('Data is undefined'));
+      } else {
+        IndexedDB.open(this.dbName, this.dbCollectionNames).then((openDB) => {
+          function onTransactionError(e) {
+            openDB.close();
+            reject(e);
+          }
 
-        function onTransactionError(e) {
-          requestErrors.push(e);
-          openDB.close();
-          reject(requestErrors);
-        }
+          function onTransactionComplete() {
+            openDB.close();
+            resolve(data._id);
+          }
 
-        function onTransactionComplete() {
-          openDB.close();
-          resolve(data._id);
-        }
+          const transaction = IndexedDB.createReadWriteTransaction(openDB, [CHANGES_DB_STORE_NAME, this.collectionName], onTransactionComplete, onTransactionError);
 
-        const transaction = IndexedDB.createReadWriteTransaction(openDB, [CHANGES_DB_STORE_NAME, this.collectionName], onTransactionComplete, onTransactionError);
+          const changeObjectsStore = transaction.objectStore(CHANGES_DB_STORE_NAME);
+          const objectStore = transaction.objectStore(this.collectionName);
 
-        const changeObjectsStore = transaction.objectStore(CHANGES_DB_STORE_NAME);
-        const objectStore = transaction.objectStore(this.collectionName);
+          if (!data._id) {
+            data._id = cuid();
+          }
+          const changeObject = createUpdateChangeObject(this.collectionName, data);
 
-        if (!data._id) {
-          data._id = cuid();
-        }
-        const changeObject = createUpdateChangeObject(this.collectionName, data);
-
-        const changeObjectPromise = IndexedDB.save(changeObjectsStore, changeObject);
-        const savePromise = IndexedDB.save(objectStore, data);
-
-        Promise.all([changeObjectPromise, savePromise]).catch((e) => {
-          requestErrors.push(e);
+          IndexedDB.save(objectStore, data).then(() => {
+            return IndexedDB.save(changeObjectsStore, changeObject);
+          }).catch((e) => {
+            reject(e);
+          });
+        }).catch(function(e) {
+          reject(e);
         });
-      }).catch(function(e) {
-        reject(e);
-      });
+      }
     });
   }
 
   remove(id) {
     return new Promise((resolve, reject) => {
       IndexedDB.open(this.dbName, this.dbCollectionNames).then((openDB) => {
-        const requestErrors = [];
-
         function onTransactionError(e) {
-          requestErrors.push(e);
           openDB.close();
-          reject(requestErrors);
+          reject(e);
         }
 
         function onTransactionComplete() {
@@ -81,11 +78,13 @@ export default class Collection {
 
         const changeObject = createRemoveChangeObject(this.collectionName, id);
 
-        const changeObjectPromise = IndexedDB.save(changeObjectsStore, changeObject);
-        const removePromise = IndexedDB.remove(objectStore, id);
-        Promise.all([changeObjectPromise, removePromise]).catch((e) => {
-          requestErrors.push(e);
+        IndexedDB.remove(objectStore, id).then(() => {
+          return IndexedDB.save(changeObjectsStore, changeObject);
+        }).catch((e) => {
+          reject(e);
         });
+      }).catch((e) => {
+        reject(e);
       });
     });
   }
