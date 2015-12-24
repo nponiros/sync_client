@@ -15,6 +15,7 @@ describe('download', () => {
   const dbName = 'testDB';
   const collectionNames = [collectionName, CHANGES_DB_STORE_NAME];
   const serverUrl = '';
+  const lastUpdateTS = '1';
 
   let openDB;
 
@@ -26,7 +27,7 @@ describe('download', () => {
     spyOn(db, 'createReadTransaction').and.callThrough();
     spyOn(db, 'createReadWriteTransaction').and.callThrough();
     spyOn(db, 'remove').and.callThrough();
-    spyOn(localStorage, 'getItem').and.returnValue(1);
+    localStorage.setItem(LAST_UPDATE_TS, lastUpdateTS);
   });
 
 
@@ -53,30 +54,8 @@ describe('download', () => {
       expect(db.remove).toHaveBeenCalledTimes(1);
       expect(db.save).toHaveBeenCalledTimes(1);
       expect(db.open).toHaveBeenCalledTimes(1);
-      expect(ajax.post).toHaveBeenCalledWith(API_V1_DOWNLOAD, {lastUpdateTS: 1, collectionNames: [collectionName, CHANGES_DB_STORE_NAME]});
+      expect(ajax.post).toHaveBeenCalledWith(API_V1_DOWNLOAD, {lastUpdateTS, collectionNames: [collectionName, CHANGES_DB_STORE_NAME]});
       expect(openDB.close).toHaveBeenCalledTimes(1);
-      done();
-    }).catch((err) => {
-      done.fail(err);
-    });
-  });
-
-  it('should get the lastUpdateTS from localStorage', (done) => {
-    const changeObjects = [{
-      _id: 1,
-      operation: DELETE_OPERATION,
-      collectionName
-    }, {
-      _id: 2,
-      operation: UPDATE_OPERATION,
-      collectionName,
-      changeSet: {
-        _id: 2
-      }
-    }];
-    spyOn(ajax, 'post').and.returnValue(getResolvePromise({changes: changeObjects}));
-    download(dbName, collectionNames, serverUrl).then(() => {
-      expect(localStorage.getItem).toHaveBeenCalledWith(LAST_UPDATE_TS);
       done();
     }).catch((err) => {
       done.fail(err);

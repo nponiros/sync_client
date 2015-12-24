@@ -27,7 +27,6 @@ describe('upload', () => {
     spyOn(db, 'createReadWriteTransaction').and.callThrough();
     spyOn(db, 'getAll').and.callThrough();
     spyOn(db, 'remove');
-    spyOn(localStorage, 'setItem');
   });
 
 
@@ -76,7 +75,7 @@ describe('upload', () => {
     const lastUpdateTS = 1;
     spyOn(ajax, 'post').and.returnValue({lastUpdateTS, changeIds: [1, 2]});
     upload(dbName, collectionNames, serverUrl).then(() => {
-      expect(localStorage.setItem).toHaveBeenCalledWith(LAST_UPDATE_TS, 1);
+      expect(localStorage.getItem(LAST_UPDATE_TS)).toBe('1');
       done();
     }).catch((err) => {
       done.fail(err);
