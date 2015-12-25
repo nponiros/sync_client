@@ -11,6 +11,12 @@ describe('download', () => {
     });
   }
 
+  function getRejectPromise(toRejectWith) {
+    return new Promise((_, reject) => {
+      reject(toRejectWith);
+    });
+  }
+
   const collectionName = 'testCollection';
   const dbName = 'testDB';
   const collectionNames = [collectionName, CHANGES_DB_STORE_NAME];
@@ -18,11 +24,12 @@ describe('download', () => {
   const lastUpdateTS = '1';
 
   let openDB;
+  let openSpy;
 
   beforeEach(() => {
     openDB = new DBMock.IDBDatabase(dbName, collectionNames);
     spyOn(openDB, 'close');
-    spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
+    openSpy = spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
     spyOn(db, 'save').and.callThrough();
     spyOn(db, 'createReadTransaction').and.callThrough();
     spyOn(db, 'createReadWriteTransaction').and.callThrough();
@@ -54,11 +61,53 @@ describe('download', () => {
       expect(db.remove).toHaveBeenCalledTimes(1);
       expect(db.save).toHaveBeenCalledTimes(1);
       expect(db.open).toHaveBeenCalledTimes(1);
-      expect(ajax.post).toHaveBeenCalledWith(API_V1_DOWNLOAD, {lastUpdateTS, collectionNames: [collectionName, CHANGES_DB_STORE_NAME]});
+      expect(ajax.post).toHaveBeenCalledWith(API_V1_DOWNLOAD, {
+        lastUpdateTS,
+        collectionNames: [collectionName, CHANGES_DB_STORE_NAME]
+      });
       expect(openDB.close).toHaveBeenCalledTimes(1);
       done();
     }).catch((err) => {
       done.fail(err);
+    });
+  });
+
+  it('should reject the promise if some operation in the change objects is not allowed', (done) => {
+    spyOn(ajax, 'post').and.returnValue(getResolvePromise({
+      changes: [{
+        _id: 1,
+        operation: 'unknown',
+        collectionName: 'testCollection'
+      }]
+    }));
+    download(dbName, collectionNames, serverUrl).then(() => {
+      done.fail();
+    }).catch((err) => {
+      expect(err).not.toBe(undefined);
+      done();
+    });
+  });
+
+  it('should reject the promise if the database can not be opened', (done) => {
+    const changeObjects = [{
+      _id: 1,
+      operation: DELETE_OPERATION,
+      collectionName
+    }, {
+      _id: 2,
+      operation: UPDATE_OPERATION,
+      collectionName,
+      changeSet: {
+        _id: 2
+      }
+    }];
+    spyOn(ajax, 'post').and.returnValue(getResolvePromise({changes: changeObjects}));
+    openSpy.and.returnValue(getRejectPromise(Error()));
+    download(dbName, collectionNames, serverUrl).then(() => {
+      done.fail();
+    }).catch((err) => {
+      expect(err).not.toBe(undefined);
+      done();
     });
   });
 });

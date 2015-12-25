@@ -11,17 +11,24 @@ describe('upload', () => {
     });
   }
 
+  function getRejectPromise(toRejectWith) {
+    return new Promise((_, reject) => {
+      reject(toRejectWith);
+    });
+  }
+
   const collectionName = 'testCollection';
   const dbName = 'testDB';
   const collectionNames = [collectionName, CHANGES_DB_STORE_NAME];
   const serverUrl = '';
 
   let openDB;
+  let openSpy;
 
   beforeEach(() => {
     openDB = new DBMock.IDBDatabase(dbName, collectionNames);
     spyOn(openDB, 'close');
-    spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
+    openSpy = spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
     spyOn(db, 'save').and.callThrough();
     spyOn(db, 'createReadTransaction').and.callThrough();
     spyOn(db, 'createReadWriteTransaction').and.callThrough();
@@ -79,6 +86,16 @@ describe('upload', () => {
       done();
     }).catch((err) => {
       done.fail(err);
+    });
+  });
+
+  it('should reject the promise if the database can not be opened', (done) => {
+    openSpy.and.returnValue(getRejectPromise(Error()));
+    upload(dbName, collectionNames, serverUrl).then(() => {
+      done.fail();
+    }).catch((err) => {
+      expect(err).not.toBe(undefined);
+      done();
     });
   });
 });

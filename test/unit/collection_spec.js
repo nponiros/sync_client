@@ -10,6 +10,12 @@ describe('Collection', () => {
     });
   }
 
+  function getRejectPromise(toRejectWith) {
+    return new Promise((_, reject) => {
+      reject(toRejectWith);
+    });
+  }
+
   const collectionName = 'testCollection';
   const dbName = 'testDB';
   const collectionNames = [collectionName, CHANGES_DB_STORE_NAME];
@@ -50,11 +56,12 @@ describe('Collection', () => {
   describe('save', () => {
     let collection;
     let openDB;
+    let openSpy;
 
     beforeEach(() => {
       openDB = new DBMock.IDBDatabase(dbName, collectionNames);
       spyOn(openDB, 'close');
-      spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
+      openSpy = spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
       collection = new Collection(collectionName, dbName, collectionNames);
       spyOn(db, 'save').and.callThrough();
       spyOn(db, 'createReadWriteTransaction').and.callThrough();
@@ -94,16 +101,36 @@ describe('Collection', () => {
         done.fail(err);
       });
     });
+
+    it('should reject with a TypeError if the data is undefiend', (done) => {
+      collection.save().then(() => {
+        done.fail();
+      }).catch((err) => {
+        expect(err).toEqual(jasmine.any(TypeError));
+        done();
+      });
+    });
+
+    it('should reject with an error if the database can not be opened', (done) => {
+      openSpy.and.returnValue(getRejectPromise(Error()));
+      collection.save({}).then(() => {
+        done.fail();
+      }).catch((err) => {
+        expect(err).not.toBe(undefined);
+        done();
+      });
+    });
   });
 
   describe('remove', () => {
     let collection;
     let openDB;
+    let openSpy;
 
     beforeEach(() => {
       openDB = new DBMock.IDBDatabase(dbName, collectionNames);
       spyOn(openDB, 'close');
-      spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
+      openSpy = spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
       collection = new Collection(collectionName, dbName, collectionNames);
       spyOn(db, 'save').and.callThrough();
       spyOn(db, 'remove').and.callThrough();
@@ -126,6 +153,16 @@ describe('Collection', () => {
         done();
       }).catch((err) => {
         done.fail(err);
+      });
+    });
+
+    it('should reject with an error if the database can not be opened', (done) => {
+      openSpy.and.returnValue(getRejectPromise(Error()));
+      collection.remove(1).then(() => {
+        done.fail();
+      }).catch((err) => {
+        expect(err).not.toBe(undefined);
+        done();
       });
     });
   });

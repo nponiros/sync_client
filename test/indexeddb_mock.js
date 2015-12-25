@@ -213,6 +213,9 @@ export class IDBTransaction {
     internal.requests = [];
   }
 
+  abort() {
+
+  }
   objectStore(name) {
     if (!this._flags.active) {
       throw new DOMException('InvalidStateError');
