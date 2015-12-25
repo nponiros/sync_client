@@ -6,8 +6,9 @@ module.exports = function(config) {
     captureConsole: true,
     plugins: [
       'karma-babel-preprocessor',
-      'karma-commonjs',
       'karma-chrome-launcher',
+      'karma-commonjs',
+      'karma-coverage',
       'karma-firefox-launcher',
       'karma-jasmine',
       'karma-jasmine-ajax'
@@ -15,7 +16,7 @@ module.exports = function(config) {
     browsers: ['Chrome', 'Firefox'],
     files: ['test/indexeddb_mock.js', 'src/**/*.js', 'test/unit/*_spec.js'],
     preprocessors: {
-      'src/**/*.js': ['babel', 'commonjs'],
+      'src/**/*.js': ['coverage', 'commonjs'],
       'test/**/*.js': ['babel', 'commonjs']
     },
     babelPreprocessor: {
@@ -24,6 +25,23 @@ module.exports = function(config) {
       },
       sourceFileName: function(file) {
         return file.originalPath;
+      }
+    },
+    reporters: ['progress', 'coverage'],
+    // optionally, configure the reporter
+    coverageReporter: {
+      type: 'html',
+      dir: 'coverage/',
+      instrumenters: {isparta: require('isparta')},
+      instrumenter: {
+        '**/*.js': 'isparta'
+      },
+      instrumenterOptions: {
+        isparta: {
+          babel: {
+            presets: 'es2015'
+          }
+        }
       }
     }
   });
