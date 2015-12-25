@@ -20,12 +20,9 @@ export default function upload(dbName, collectionNames, serverUrl) {
       return post(`${serverUrl}${API_V1_UPLOAD}`, {changes: changeObjects});
     }).then((resp) => {
       IndexedDB.open(dbName, collectionNames).then((openDB) => {
-        const requestErrors = [];
-
-        function onTransactionError(e) {
+        function onTransactionError(err) {
           openDB.close();
-          requestErrors.push(e);
-          reject(requestErrors);
+          reject(err);
         }
 
         function onTransactionComplete() {
@@ -43,12 +40,12 @@ export default function upload(dbName, collectionNames, serverUrl) {
 
         Promise.all(promises).then(() => {
           localStorage.setItem(LAST_UPDATE_TS, lastUpdateTS);
-        }).catch((e) => {
-          requestErrors.push(e);
+        }).catch((err) => {
+          transaction.abort();
+          onTransactionError(err);
         });
       });
     }).catch((err) => {
-      console.log(err);
       reject(err);
     });
   });

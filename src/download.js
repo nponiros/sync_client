@@ -18,13 +18,10 @@ export default function download(dbName, collectionNames, serverUrl) {
       });
       return changes;
     }).then((changes) => {
-      IndexedDB.open(dbName, collectionNames).then((openDB) => {
-        const requestErrors = [];
-
-        function onTransactionError(e) {
+      return IndexedDB.open(dbName, collectionNames).then((openDB) => {
+        function onTransactionError(err) {
           openDB.close();
-          requestErrors.push(e);
-          reject(requestErrors);
+          reject(err);
         }
 
         function onTransactionComplete() {
@@ -51,7 +48,8 @@ export default function download(dbName, collectionNames, serverUrl) {
           }
         }
         Promise.all(promises).catch((err) => {
-          requestErrors.push(err);
+          transaction.abort();
+          onTransactionError(err);
         });
       });
     }).catch((err) => {
