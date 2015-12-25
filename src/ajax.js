@@ -4,9 +4,7 @@ function exec(options) {
     const {data, url} = options;
 
     const xhr = new XMLHttpRequest();
-
     xhr.open(method, url);
-
     xhr.responseType = 'json';
 
     xhr.setRequestHeader('X-Request-With', 'XMLHttpRequest');
@@ -32,7 +30,7 @@ function exec(options) {
     xhr.onerror = handleError;
     xhr.onabort = handleAbort;
 
-    xhr.send(data);
+    xhr.send(JSON.stringify(data));
   });
 
   return promise;

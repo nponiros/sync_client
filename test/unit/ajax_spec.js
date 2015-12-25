@@ -30,7 +30,7 @@ describe('Ajax post', () => {
     post(url, data);
     expect(request.url).toBe(url);
     expect(request.method).toBe('POST');
-    expect(request.params).toEqual(data);
+    expect(request.params).toEqual(JSON.stringify(data));
   });
 
   it('should set the correct request headers', () => {
