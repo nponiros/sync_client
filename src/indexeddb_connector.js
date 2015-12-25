@@ -94,28 +94,37 @@ export function getOne(objectStore, id) {
 
 export function remove(objectStore, id) {
   return new Promise((resolve, reject) => {
-    const request = objectStore.delete(id);
+    try {
+      const request = objectStore.delete(id);
 
-    request.onsuccess = function() {
-      resolve();
-    };
+      request.onsuccess = function() {
+        resolve();
+      };
 
-    request.onerror = function(e) {
+      request.onerror = function(e) {
+        reject(e);
+      };
+    } catch (e) {
+      objectStore.transaction.abort();
       reject(e);
-    };
+    }
   });
 }
 
 export function save(objectStore, data) {
   return new Promise((resolve, reject) => {
-    const request = objectStore.put(data);
+    try {
+      const request = objectStore.put(data);
+      request.onsuccess = function() {
+        resolve(data._id);
+      };
 
-    request.onsuccess = function() {
-      resolve(data._id);
-    };
-
-    request.onerror = function(e) {
+      request.onerror = function(e) {
+        reject(e);
+      };
+    } catch (e) {
+      objectStore.transaction.abort();
       reject(e);
-    };
+    }
   });
 }

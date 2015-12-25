@@ -46,12 +46,13 @@ export default class Collection {
           }
           const changeObject = createUpdateChangeObject(this.collectionName, data);
 
-          IndexedDB.save(objectStore, data).then(() => {
-            return IndexedDB.save(changeObjectsStore, changeObject);
-          }).catch((e) => {
-            reject(e);
+          const collectionPromise = IndexedDB.save(objectStore, data);
+          const changesPromise = IndexedDB.save(changeObjectsStore, changeObject);
+
+          Promise.all([collectionPromise, changesPromise]).catch((err) => {
+            onTransactionError(err);
           });
-        }).catch(function(e) {
+        }).catch((e) => {
           reject(e);
         });
       }
@@ -78,10 +79,11 @@ export default class Collection {
 
         const changeObject = createRemoveChangeObject(this.collectionName, id);
 
-        IndexedDB.remove(objectStore, id).then(() => {
-          return IndexedDB.save(changeObjectsStore, changeObject);
-        }).catch((e) => {
-          reject(e);
+        const removePromise = IndexedDB.remove(objectStore, id);
+        const changesPromise = IndexedDB.save(changeObjectsStore, changeObject);
+
+        Promise.all([removePromise, changesPromise]).catch((err) => {
+          onTransactionError(err);
         });
       }).catch((e) => {
         reject(e);
