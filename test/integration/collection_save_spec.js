@@ -27,6 +27,7 @@ describe('Collection save', () => {
         collectionData = e.target.result;
       };
       getRequest.onerror = function(err) {
+        openDB.close();
         done.fail(err);
       };
 
@@ -35,15 +36,18 @@ describe('Collection save', () => {
         changeCollectionData = e.target.result;
       };
       changeRequest.onerror = function(err) {
+        openDB.close();
         done.fail(err);
       };
 
       transaction.oncomplete = function() {
+        openDB.close();
         checkFn(collectionData, changeCollectionData);
         done();
       };
 
       transaction.onerror = function(err) {
+        openDB.close();
         done.fail(err);
       };
     };
@@ -132,18 +136,23 @@ describe('Collection save', () => {
     });
   });
 
-  it('should reject the promise if the data can not be cloned', (done) => {
+  it('should reject the promise if the data can not be cloned. The change collection should not contain a change object for the given id', (done) => {
     const data = {
       _id: 10,
-      noClone() {}
+      noClone() {
+      }
     };
     collection.save(data).then(() => {
       done.fail();
     }).catch((err) => {
-      expect(err).not.toBe(undefined);
-      expect(err).toEqual(jasmine.any(DOMException));
-      expect(err.name).toBe('DataCloneError');
-      done();
+      function checkFn(collectionData, changeCollectionData) {
+        expect(err).not.toBe(undefined);
+        expect(err).toEqual(jasmine.any(DOMException));
+        expect(err.name).toBe('DataCloneError');
+        expect(changeCollectionData).toBe(undefined);
+      }
+
+      checkExpect(done, checkFn, data._id);
     });
   });
 

@@ -27,6 +27,7 @@ describe('Collection remove', () => {
         collectionData = e.target.result;
       };
       getRequest.onerror = function(err) {
+        openDB.close();
         done.fail(err);
       };
 
@@ -35,15 +36,18 @@ describe('Collection remove', () => {
         changeCollectionData = e.target.result;
       };
       changeRequest.onerror = function(err) {
+        openDB.close();
         done.fail(err);
       };
 
       transaction.oncomplete = function() {
+        openDB.close();
         checkFn(collectionData, changeCollectionData);
         done();
       };
 
       transaction.onerror = function(err) {
+        openDB.close();
         done.fail(err);
       };
     };
@@ -53,23 +57,55 @@ describe('Collection remove', () => {
     };
   }
 
-  it('should resolve the promise if no object with given id is in the database', (done) => {
-    const id = 10;
-    collection.remove(id).then(() => {
-      done();
-    }).catch((err) => {
-      done.fail(err);
-    });
-  });
-
-  it('should reject the promise if the given id is undefined', (done) => {
+  it('should reject the promise if the given id is undefined. No change object should be written', (done) => {
     collection.remove().then(() => {
       done.fail();
     }).catch((err) => {
       expect(err).not.toBe(undefined);
       expect(err).toEqual(jasmine.any(DOMException));
       expect(err.name).toBe('DataError');
-      done();
+      const openDBRequest = window.indexedDB.open(dbName, 1);
+      openDBRequest.onsuccess = function(openDBEvent) {
+        const openDB = openDBEvent.target.result;
+        const transaction = openDB.transaction(['changesDBStore'], 'readonly');
+        const objectStore = transaction.objectStore('changesDBStore');
+        const cursorRequest = objectStore.openCursor();
+
+        const results = [];
+
+        cursorRequest.onsuccess = function(e) {
+          const cursor = e.target.result;
+          if (cursor && cursor !== null) {
+            results.push(cursor.value);
+            cursor.continue();
+          } else {
+            openDB.close();
+            expect(results.length).toBe(0);
+            done();
+          }
+        };
+
+        cursorRequest.onerror = function(e) {
+          openDB.close();
+          done.fail(e);
+        };
+      };
+      openDBRequest.onerror = function(e) {
+        done.fail(e);
+      };
+    });
+  });
+
+  it('should resolve the promise if no object with given id is in the database', (done) => {
+    const id = 10;
+    collection.remove(id).then(() => {
+      function checkFn(collectionData, changeCollectionData) {
+        expect(changeCollectionData.operation).toBe('DELETE');
+      }
+
+      checkExpect(done, checkFn, id);
+    }).catch((err) => {
+      done.fail(err);
     });
   });
 
