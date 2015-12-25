@@ -22,14 +22,8 @@ export default class SyncClient {
   }
 
   sync() {
-    return new Promise((resolve, reject) => {
-      return downloadFn(this.dbName, this.collectionNames, this.serverUrl).then(() => {
-        return uploadFn(this.dbName, this.collectionNames, this.serverUrl);
-      }).then(() => {
-        resolve();
-      }).catch(() => {
-        reject();
-      });
+    return downloadFn(this.dbName, this.collectionNames, this.serverUrl).then(() => {
+      return uploadFn(this.dbName, this.collectionNames, this.serverUrl);
     });
   }
 }
