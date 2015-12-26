@@ -1,4 +1,3 @@
-// TODO some return value types don't match the spec
 export class IDBRequest {
   constructor(transaction, source, result, flags) {
     const self = this;
@@ -12,7 +11,6 @@ export class IDBRequest {
         self.errorCB = cb;
       }
     });
-    // TODO these get set after "done"
     this.result = result;
     this.error = null;
 
@@ -104,7 +102,6 @@ export class IDBObjectStore {
     if (!this.transaction._flags.active) {
       throw new DOMException('TransactionInactiveError');
     }
-    // TODO: is the result of put really null?
     const requestFlags = this.internal.flags.request;
     const request = new IDBRequest(this.transaction, this, null, requestFlags);
     this.transaction.internal.requests.push(request);
@@ -132,7 +129,6 @@ export class IDBObjectStore {
     return request;
   }
 
-// TODO range and direction
   openCursor() {
     if (!this.transaction._flags.active) {
       throw new DOMException('TransactionInactiveError');
@@ -236,8 +232,6 @@ export class IDBTransaction {
   }
 }
 
-// TODO flags is too complicated
-// TODO need also flags set by indexeddb itself
 export class IDBDatabase {
   constructor(name, objectStoreNames) {
     this.name = name;
