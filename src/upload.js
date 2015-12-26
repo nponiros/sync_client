@@ -3,7 +3,7 @@ import * as IndexedDB from './indexeddb_connector.js';
 
 import {post} from './ajax.js';
 
-export default function upload(dbName, collectionNames, serverUrl) {
+export function upload(dbName, collectionNames, serverUrl) {
 // Server always has the change of the last client which synced -> changes could be overwritten
   return new Promise((resolve, reject) => {
     IndexedDB.open(dbName, collectionNames).then((openDB) => {
