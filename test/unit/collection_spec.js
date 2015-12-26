@@ -57,13 +57,14 @@ describe('Collection', () => {
     let collection;
     let openDB;
     let openSpy;
+    let saveSpy;
 
     beforeEach(() => {
       openDB = new DBMock.IDBDatabase(dbName, collectionNames);
       spyOn(openDB, 'close');
       openSpy = spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
       collection = new Collection(collectionName, dbName, collectionNames);
-      spyOn(db, 'save').and.callThrough();
+      saveSpy = spyOn(db, 'save').and.callThrough();
       spyOn(db, 'createReadWriteTransaction').and.callThrough();
     });
 
@@ -120,20 +121,32 @@ describe('Collection', () => {
         done();
       });
     });
+
+    it('should reject with an error if the data cannot be saved', (done) => {
+      saveSpy.and.returnValue(getRejectPromise(Error()));
+      collection.save({}).then(() => {
+        done.fail();
+      }).catch((err) => {
+        expect(err).not.toBe(undefined);
+        done();
+      });
+    });
   });
 
   describe('remove', () => {
     let collection;
     let openDB;
     let openSpy;
+    let saveSpy;
+    let removeSpy;
 
     beforeEach(() => {
       openDB = new DBMock.IDBDatabase(dbName, collectionNames);
       spyOn(openDB, 'close');
       openSpy = spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
       collection = new Collection(collectionName, dbName, collectionNames);
-      spyOn(db, 'save').and.callThrough();
-      spyOn(db, 'remove').and.callThrough();
+      saveSpy = spyOn(db, 'save').and.callThrough();
+      removeSpy = spyOn(db, 'remove').and.callThrough();
       spyOn(db, 'createReadWriteTransaction').and.callThrough();
     });
 
@@ -158,6 +171,26 @@ describe('Collection', () => {
 
     it('should reject with an error if the database can not be opened', (done) => {
       openSpy.and.returnValue(getRejectPromise(Error()));
+      collection.remove(1).then(() => {
+        done.fail();
+      }).catch((err) => {
+        expect(err).not.toBe(undefined);
+        done();
+      });
+    });
+
+    it('should reject with an error if the data cannot be saved', (done) => {
+      saveSpy.and.returnValue(getRejectPromise(Error()));
+      collection.remove(1).then(() => {
+        done.fail();
+      }).catch((err) => {
+        expect(err).not.toBe(undefined);
+        done();
+      });
+    });
+
+    it('should reject with an error if the data cannot be removed', (done) => {
+      removeSpy.and.returnValue(getRejectPromise(Error()));
       collection.remove(1).then(() => {
         done.fail();
       }).catch((err) => {
