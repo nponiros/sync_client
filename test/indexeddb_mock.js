@@ -148,7 +148,11 @@ export class IDBObjectStore {
       data,
       request
     };
-    request.result = new IDBCursorWithValue(this, cursorInternal);
+    if (keys.length === 0) {
+      request.result = null;
+    } else {
+      request.result = new IDBCursorWithValue(this, cursorInternal);
+    }
     return request;
   }
 }
@@ -216,6 +220,7 @@ export class IDBTransaction {
   abort() {
 
   }
+
   objectStore(name) {
     if (!this._flags.active) {
       throw new DOMException('InvalidStateError');
