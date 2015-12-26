@@ -1,5 +1,4 @@
 import Collection from './collection.js';
-import {CHANGES_DB_STORE_NAME} from './constants.js';
 import {upload} from './upload.js';
 import {download} from './download.js';
 
