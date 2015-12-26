@@ -38,5 +38,7 @@
     "test": "npm run test-unit && npm run test-integration; node ./test/test_server.js stop",
     "test-unit": "karma start karma-unit.conf.js",
     "test-integration": "karma start karma-integration.conf.js"
-  }
+  },
+  "description": "Module which uses IndexedDB to save data and can later use a server to synchronize the data in the database with other devices",
+  "keywords": ["IndexedDB", "offline", "synchronization"]
 }
