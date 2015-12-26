@@ -1,10 +1,11 @@
-import {IDBTransactionModes} from './constants.js';
+import {IDBTransactionModes, CHANGES_DB_STORE_NAME} from './constants.js';
 
 const version = 1;
 
 export function open(dbName, dbStoreNames) {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(dbName, version);
+    const storeNames = [CHANGES_DB_STORE_NAME, ...dbStoreNames];
 
     request.onupgradeneeded = function(e) {
       const db = e.target.result;
@@ -15,7 +16,7 @@ export function open(dbName, dbStoreNames) {
 
       // Create stores
       const existingStores = [...db.objectStoreNames];
-      dbStoreNames.forEach((dbstoreName) => {
+      storeNames.forEach((dbstoreName) => {
         const storeExists = existingStores.indexOf(dbstoreName) !== -1;
         if (!storeExists) {
           db.createObjectStore(dbstoreName, options);
