@@ -14,7 +14,7 @@ export function open(dbName, dbStoreNames) {
       };
 
       // Create stores
-      const existingStores = Array.prototype.slice.call(db.objectStoreNames);
+      const existingStores = [...db.objectStoreNames];
       dbStoreNames.forEach((dbstoreName) => {
         const storeExists = existingStores.indexOf(dbstoreName) !== -1;
         if (!storeExists) {
