@@ -8,16 +8,22 @@ export default function download(dbName, collectionNames, serverUrl) {
   return new Promise((resolve, reject) => {
     const lastUpdateTS = localStorage.getItem(LAST_UPDATE_TS);
     post(`${serverUrl}${API_V1_DOWNLOAD}`, {lastUpdateTS, collectionNames}).then((resp) => {
-      const changes = new Map();
-      resp.changes.forEach((change) => {
-        if (changes.has(change.collectionName)) {
-          changes.get(change.collectionName).push(change);
+      if (resp.changes.length > 0) {
+        return resp.changes;
+      } else {
+        resolve();
+      }
+    }).then((changes) => {
+      const collectionsToChange = new Map();
+      changes.forEach((change) => {
+        if (collectionsToChange.has(change.collectionName)) {
+          collectionsToChange.get(change.collectionName).push(change);
         } else {
-          changes.set(change.collectionName, [change]);
+          collectionsToChange.set(change.collectionName, [change]);
         }
       });
-      return changes;
-    }).then((changes) => {
+      return collectionsToChange;
+    }).then((collectionsToChange) => {
       return IndexedDB.open(dbName, collectionNames).then((openDB) => {
         function onTransactionError(err) {
           openDB.close();
@@ -39,9 +45,9 @@ export default function download(dbName, collectionNames, serverUrl) {
           }
         }
 
-        const transaction = IndexedDB.createReadWriteTransaction(openDB, Array.from(changes.keys()), onTransactionComplete, onTransactionError);
+        const transaction = IndexedDB.createReadWriteTransaction(openDB, Array.from(collectionsToChange.keys()), onTransactionComplete, onTransactionError);
         const promises = [];
-        for (const [collectionName, changeObjects] of changes) {
+        for (const [collectionName, changeObjects] of collectionsToChange) {
           const objectStore = transaction.objectStore(collectionName);
           for (const changeObject of changeObjects) {
             promises.push(execOperation(changeObject, objectStore));
