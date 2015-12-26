@@ -6,18 +6,9 @@ import {createUpdateChangeObject, createRemoveChangeObject} from './change_objec
 
 export default class Collection {
   constructor(collectionName, dbName, dbCollectionNames) {
-    const containsCollectionName = dbCollectionNames.indexOf(collectionName);
-    const containsChangeCollectionName = dbCollectionNames.indexOf(CHANGES_DB_STORE_NAME);
-
-    if (containsCollectionName === -1) {
-      throw Error('Collection name is not in the collections list');
-    } else if (containsChangeCollectionName === -1) {
-      throw Error('Change collection is not in the collections list');
-    } else {
-      this.collectionName = collectionName;
-      this.dbName = dbName;
-      this.dbCollectionNames = dbCollectionNames;
-    }
+    this.collectionName = collectionName;
+    this.dbName = dbName;
+    this.dbCollectionNames = dbCollectionNames;
   }
 
   save(data) {
