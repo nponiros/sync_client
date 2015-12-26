@@ -33,11 +33,6 @@ describe('SyncClient', () => {
       expect(syncClient instanceof SyncClient).toBe(true);
     });
 
-    it('should contain the changes collection in the collection names', () => {
-      const internalCollectionNames = syncClient.collectionNames;
-      expect(internalCollectionNames[1]).toBe(CHANGES_DB_STORE_NAME);
-    });
-
     it('should not contain the changes collection in the collections map', () => {
       const collectionsMap = syncClient.collections;
       expect(collectionsMap.get(CHANGES_DB_STORE_NAME)).toBe(undefined);

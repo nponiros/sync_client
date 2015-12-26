@@ -19,7 +19,8 @@ describe('download', () => {
 
   const collectionName = 'testCollection';
   const dbName = 'testDB';
-  const collectionNames = [collectionName, CHANGES_DB_STORE_NAME];
+  const collectionNames = [collectionName];
+  const collectionNamesForOpenDB = [CHANGES_DB_STORE_NAME, collectionName];
   const serverUrl = '';
   const lastUpdateTS = '1';
 
@@ -27,7 +28,7 @@ describe('download', () => {
   let openSpy;
 
   beforeEach(() => {
-    openDB = new DBMock.IDBDatabase(dbName, collectionNames);
+    openDB = new DBMock.IDBDatabase(dbName, collectionNamesForOpenDB);
     spyOn(openDB, 'close');
     openSpy = spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
     spyOn(db, 'save').and.callThrough();
@@ -63,7 +64,7 @@ describe('download', () => {
       expect(db.open).toHaveBeenCalledTimes(1);
       expect(ajax.post).toHaveBeenCalledWith(API_V1_DOWNLOAD, {
         lastUpdateTS,
-        collectionNames: [collectionName, CHANGES_DB_STORE_NAME]
+        collectionNames: [collectionName]
       });
       expect(openDB.close).toHaveBeenCalledTimes(1);
       done();

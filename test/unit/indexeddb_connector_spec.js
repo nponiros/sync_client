@@ -1,5 +1,5 @@
 import * as db from '../../src/indexeddb_connector.js';
-import {IDBTransactionModes} from '../../src/constants.js';
+import {IDBTransactionModes, CHANGES_DB_STORE_NAME} from '../../src/constants.js';
 import * as DBMock from '../indexeddb_mock.js';
 
 describe('IndexedDB Connector', () => {
@@ -10,7 +10,8 @@ describe('IndexedDB Connector', () => {
       db.open(name, dbStoreNames).then((openDB) => {
         expect(openDB.name).toBe(name);
         expect(openDB.version).toBe(1);
-        expect(openDB.objectStoreNames[0]).toBe(dbStoreNames[0]);
+        expect(openDB.objectStoreNames[0]).toBe(CHANGES_DB_STORE_NAME);
+        expect(openDB.objectStoreNames[1]).toBe(dbStoreNames[0]);
         openDB.close();
         done();
       }).catch((err) => {

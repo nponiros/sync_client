@@ -18,40 +18,8 @@ describe('Collection', () => {
 
   const collectionName = 'testCollection';
   const dbName = 'testDB';
-  const collectionNames = [collectionName, CHANGES_DB_STORE_NAME];
-
-  describe('constructor', () => {
-    it('should set the database name, collection name and a list of database collections', () => {
-      const name = 'testCollection';
-      const collections = [name, CHANGES_DB_STORE_NAME];
-      const collection = new Collection(name, dbName, collections);
-      expect(collection.collectionName).toBe(name);
-      expect(collection.dbName).toBe(dbName);
-      expect(collection.dbCollectionNames).toEqual(collections);
-    });
-
-    it('should throw an error if the collection name is not in the collections list', () => {
-      const name = 'testCollection';
-      const collections = [CHANGES_DB_STORE_NAME];
-
-      function fn() {
-        new Collection(name, dbName, collections); //eslint-disable-line no-new
-      }
-
-      expect(fn).toThrow();
-    });
-
-    it('should throw an error if the change collection name is not in the collections list', () => {
-      const name = 'testCollection';
-      const collections = [name];
-
-      function fn() {
-        new Collection(name, dbName, collections); //eslint-disable-line no-new
-      }
-
-      expect(fn).toThrow();
-    });
-  });
+  const collectionNames = [collectionName];
+  const collectionNamesForOpenDB = [CHANGES_DB_STORE_NAME, collectionName];
 
   describe('save', () => {
     let collection;
@@ -60,7 +28,7 @@ describe('Collection', () => {
     let saveSpy;
 
     beforeEach(() => {
-      openDB = new DBMock.IDBDatabase(dbName, collectionNames);
+      openDB = new DBMock.IDBDatabase(dbName, collectionNamesForOpenDB);
       spyOn(openDB, 'close');
       openSpy = spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
       collection = new Collection(collectionName, dbName, collectionNames);
@@ -141,7 +109,7 @@ describe('Collection', () => {
     let removeSpy;
 
     beforeEach(() => {
-      openDB = new DBMock.IDBDatabase(dbName, collectionNames);
+      openDB = new DBMock.IDBDatabase(dbName, collectionNamesForOpenDB);
       spyOn(openDB, 'close');
       openSpy = spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
       collection = new Collection(collectionName, dbName, collectionNames);

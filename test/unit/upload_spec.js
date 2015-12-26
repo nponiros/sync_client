@@ -19,7 +19,8 @@ describe('upload', () => {
 
   const collectionName = 'testCollection';
   const dbName = 'testDB';
-  const collectionNames = [collectionName, CHANGES_DB_STORE_NAME];
+  const collectionNamesForOpenDB = [CHANGES_DB_STORE_NAME, collectionName];
+  const collectionNames = [collectionName];
   const serverUrl = '';
 
   let openDB;
@@ -28,7 +29,7 @@ describe('upload', () => {
   let removeSpy;
 
   beforeEach(() => {
-    openDB = new DBMock.IDBDatabase(dbName, collectionNames);
+    openDB = new DBMock.IDBDatabase(dbName, collectionNamesForOpenDB);
     spyOn(openDB, 'close');
     openSpy = spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
     spyOn(db, 'save').and.callThrough();
