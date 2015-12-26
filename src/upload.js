@@ -45,7 +45,6 @@ export function upload(dbName, collectionNames, serverUrl) {
         Promise.all(promises).then(() => {
           localStorage.setItem(LAST_UPDATE_TS, lastUpdateTS);
         }).catch((err) => {
-          transaction.abort();
           onTransactionError(err);
         });
       });

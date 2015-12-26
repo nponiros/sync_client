@@ -54,7 +54,6 @@ export function download(dbName, collectionNames, serverUrl) {
           }
         }
         Promise.all(promises).catch((err) => {
-          transaction.abort();
           onTransactionError(err);
         });
       });
