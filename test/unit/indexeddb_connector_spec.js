@@ -14,7 +14,7 @@ describe('IndexedDB Connector', () => {
         openDB.close();
         done();
       }).catch((err) => {
-        done(err);
+        done.fail(err);
       });
     });
   });
@@ -30,6 +30,8 @@ describe('IndexedDB Connector', () => {
       db.save(objectStore, data).then((id) => {
         expect(id).toBe(1);
         done();
+      }).catch((err) => {
+        done.fail(err);
       });
     });
 
@@ -52,6 +54,24 @@ describe('IndexedDB Connector', () => {
         done();
       });
     });
+
+    it('should reject the promise if an exception is thrown and abort the transaction', (done) => {
+      const data = {
+        _id: 1
+      };
+      const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
+      const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_WRITE);
+      const objectStore = trans.objectStore('testStore');
+      trans._flags.active = false;
+      spyOn(trans, 'abort');
+      db.save(objectStore, data).then(() => {
+        done.fail();
+      }).catch((err) => {
+        expect(err).not.toBe(undefined);
+        expect(trans.abort).toHaveBeenCalled();
+        done();
+      });
+    });
   });
 
   describe('remove', () => {
@@ -63,6 +83,8 @@ describe('IndexedDB Connector', () => {
       db.remove(objectStore, id).then((returnId) => {
         expect(returnId).toBe(undefined);
         done();
+      }).catch((err) => {
+        done.fail(err);
       });
     });
 
@@ -76,8 +98,26 @@ describe('IndexedDB Connector', () => {
       });
       const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_ONLY);
       const objectStore = trans.objectStore('testStore');
-      db.remove(objectStore, id).catch((err) => {
+      db.remove(objectStore, id).then(() => {
+        done.fail();
+      }).catch((err) => {
         expect(err).not.toBe(undefined);
+        done();
+      });
+    });
+
+    it('should reject the promise if an exception is thrown and abort the transaction', (done) => {
+      const id = 1;
+      const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
+      const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_WRITE);
+      const objectStore = trans.objectStore('testStore');
+      trans._flags.active = false;
+      spyOn(trans, 'abort');
+      db.remove(objectStore, id).then(() => {
+        done.fail();
+      }).catch((err) => {
+        expect(err).not.toBe(undefined);
+        expect(trans.abort).toHaveBeenCalled();
         done();
       });
     });
@@ -107,6 +147,9 @@ describe('IndexedDB Connector', () => {
     it('should return an error object if the error callback gets called', (done) => {
       const id = 1;
       const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
+      dbMock.setData({
+        testStore: {}
+      });
       dbMock.setFlags({
         request: {
           onError: true
@@ -114,7 +157,9 @@ describe('IndexedDB Connector', () => {
       });
       const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_ONLY);
       const objectStore = trans.objectStore('testStore');
-      db.getOne(objectStore, id).catch((err) => {
+      db.getOne(objectStore, id).then(() => {
+        done.fail();
+      }).catch((err) => {
         expect(err).not.toBe(undefined);
         done();
       });
@@ -162,6 +207,9 @@ describe('IndexedDB Connector', () => {
 
     it('should return an error object if the error callback gets called', (done) => {
       const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
+      dbMock.setData({
+        testStore: {}
+      });
       dbMock.setFlags({
         request: {
           onError: true
