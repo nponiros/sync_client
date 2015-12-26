@@ -34,8 +34,8 @@
     "build-dev": "webpack --config webpack.dev.config.js",
     "build-prod": "webpack -p --config webpack.prod.config.js",
     "prepublish": "npm run build-dev && npm run build-prod",
-    "pretest": "npm run build-prod",
-    "test": "npm run test-unit && npm run test-integration",
+    "pretest": "npm run build-prod && node ./test/test_server.js start &",
+    "test": "npm run test-unit && npm run test-integration; node ./test/test_server.js stop",
     "test-unit": "karma start karma-unit.conf.js",
     "test-integration": "karma start karma-integration.conf.js"
   }
