@@ -98,4 +98,38 @@ describe('upload', () => {
       done();
     });
   });
+
+  it('should reject the promise if posting the data failed', (done) => {
+    const data = [{
+      _id: 1
+    }, {
+      _id: 2
+    }];
+    openDB.setData({
+      [CHANGES_DB_STORE_NAME]: {
+        1: data[0],
+        2: data[1]
+      }
+    });
+    spyOn(ajax, 'post').and.returnValue(getRejectPromise(Error()));
+    upload(dbName, collectionNames, serverUrl).then(() => {
+      done.fail();
+    }).catch((err) => {
+      expect(err).not.toBe(undefined);
+      done();
+    });
+  });
+
+  it('should not try to post data if no data to send are available', (done) => {
+    openDB.setData({
+      [CHANGES_DB_STORE_NAME]: {}
+    });
+    spyOn(ajax, 'post');
+    upload(dbName, collectionNames, serverUrl).then(() => {
+      expect(ajax.post).not.toHaveBeenCalled();
+      done();
+    }).catch((err) => {
+      done.fail(err);
+    });
+  });
 });

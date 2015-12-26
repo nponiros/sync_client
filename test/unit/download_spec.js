@@ -110,4 +110,24 @@ describe('download', () => {
       done();
     });
   });
+
+  it('should reject the promise if posting the data failed', (done) => {
+    spyOn(ajax, 'post').and.returnValue(getRejectPromise(Error()));
+    download(dbName, collectionNames, serverUrl).then(() => {
+      done.fail();
+    }).catch((err) => {
+      expect(err).not.toBe(undefined);
+      done();
+    });
+  });
+
+  it('should not open the DB if the server sent empty changes array', (done) => {
+    spyOn(ajax, 'post').and.returnValue(getResolvePromise({changes: []}));
+    download(dbName, collectionNames, serverUrl).then(() => {
+      expect(db.open).not.toHaveBeenCalled();
+      done();
+    }).catch((err) => {
+      done.fail(err);
+    });
+  });
 });

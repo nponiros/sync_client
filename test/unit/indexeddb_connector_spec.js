@@ -145,6 +145,21 @@ describe('IndexedDB Connector', () => {
       });
     });
 
+    it('should return an empty array if we have no data in the store', (done) => {
+      const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
+      dbMock.setData({
+        testStore: {}
+      });
+      const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_ONLY);
+      const objectStore = trans.objectStore('testStore');
+      db.getAll(objectStore).then((data) => {
+        expect(data).toEqual([]);
+        done();
+      }).catch((err) => {
+        done.fail(err);
+      });
+    });
+
     it('should return an error object if the error callback gets called', (done) => {
       const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
       dbMock.setFlags({
