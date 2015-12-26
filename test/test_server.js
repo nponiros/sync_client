@@ -10,7 +10,6 @@ const expressApp = express();
 expressApp.use(bodyParser.json());
 expressApp.use(cors());
 
-// TODO: error based on parameter
 expressApp.post('/api/v1/upload', (req, res) => {
   const changes = req.body.changes;
   const ids = changes.map((change) => {
@@ -31,9 +30,6 @@ const downloadData = [{
     title: 'title'
   }
 }];
-
-// TODO: error based on parameter
-// TODO: not valid operation
 
 expressApp.post('/api/v1/download', (req, res) => {
   res.send({
