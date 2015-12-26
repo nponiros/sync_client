@@ -1,4 +1,4 @@
-import upload from '../../src/upload.js';
+import {upload} from '../../src/upload.js';
 import {CHANGES_DB_STORE_NAME, API_V1_UPLOAD, LAST_UPDATE_TS} from '../../src/constants.js';
 import * as db from '../../src/indexeddb_connector.js';
 import * as ajax from '../../src/ajax.js';
@@ -24,6 +24,8 @@ describe('upload', () => {
 
   let openDB;
   let openSpy;
+  let getAllSpy;
+  let removeSpy;
 
   beforeEach(() => {
     openDB = new DBMock.IDBDatabase(dbName, collectionNames);
@@ -32,8 +34,8 @@ describe('upload', () => {
     spyOn(db, 'save').and.callThrough();
     spyOn(db, 'createReadTransaction').and.callThrough();
     spyOn(db, 'createReadWriteTransaction').and.callThrough();
-    spyOn(db, 'getAll').and.callThrough();
-    spyOn(db, 'remove');
+    getAllSpy = spyOn(db, 'getAll').and.callThrough();
+    removeSpy = spyOn(db, 'remove').and.callThrough();
   });
 
 
@@ -130,6 +132,39 @@ describe('upload', () => {
       done();
     }).catch((err) => {
       done.fail(err);
+    });
+  });
+
+  it('should reject the promise if getting data from the database failed', (done) => {
+    getAllSpy.and.returnValue(getRejectPromise(Error()));
+    upload(dbName, collectionName, serverUrl).then(() => {
+      done.fail();
+    }).catch((err) => {
+      expect(err).not.toBe(undefined);
+      done();
+    });
+  });
+
+  it('should reject the promise if removing data from the database failed. DB should also be closed', (done) => {
+    removeSpy.and.returnValue(getRejectPromise(Error()));
+    spyOn(ajax, 'post').and.returnValue({lastUpdateTS: 1, changeIds: [1, 2]});
+    const data = [{
+      _id: 1
+    }, {
+      _id: 2
+    }];
+    openDB.setData({
+      [CHANGES_DB_STORE_NAME]: {
+        1: data[0],
+        2: data[1]
+      }
+    });
+    upload(dbName, collectionName, serverUrl).then(() => {
+      done.fail();
+    }).catch((err) => {
+      expect(err).not.toBe(undefined);
+      expect(openDB.close).toHaveBeenCalled();
+      done();
     });
   });
 });

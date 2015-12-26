@@ -1,4 +1,4 @@
-import download from '../../src/download.js';
+import {download} from '../../src/download.js';
 import {CHANGES_DB_STORE_NAME, API_V1_DOWNLOAD, LAST_UPDATE_TS, UPDATE_OPERATION, DELETE_OPERATION} from '../../src/constants.js';
 import * as db from '../../src/indexeddb_connector.js';
 import * as ajax from '../../src/ajax.js';

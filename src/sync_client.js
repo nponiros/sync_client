@@ -1,7 +1,7 @@
 import Collection from './collection.js';
 import {CHANGES_DB_STORE_NAME} from './constants.js';
-import uploadFn from './upload.js';
-import downloadFn from './download.js';
+import {upload} from './upload.js';
+import {download} from './download.js';
 
 export default class SyncClient {
   constructor(dbName, collectionNames, serverUrl) {
@@ -22,8 +22,8 @@ export default class SyncClient {
   }
 
   sync() {
-    return downloadFn(this.dbName, this.collectionNames, this.serverUrl).then(() => {
-      return uploadFn(this.dbName, this.collectionNames, this.serverUrl);
+    return download(this.dbName, this.collectionNames, this.serverUrl).then(() => {
+      return upload(this.dbName, this.collectionNames, this.serverUrl);
     });
   }
 }
