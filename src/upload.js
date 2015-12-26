@@ -17,7 +17,11 @@ export default function upload(dbName, collectionNames, serverUrl) {
         reject(err);
       });
     }).then((changeObjects) => {
-      return post(`${serverUrl}${API_V1_UPLOAD}`, {changes: changeObjects});
+      if (changeObjects.length === 0) {
+        resolve();
+      } else {
+        return post(`${serverUrl}${API_V1_UPLOAD}`, {changes: changeObjects});
+      }
     }).then((resp) => {
       IndexedDB.open(dbName, collectionNames).then((openDB) => {
         function onTransactionError(err) {
