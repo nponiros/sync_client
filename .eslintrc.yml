@@ -5,6 +5,7 @@
     browser: true
     jasmine: true
     es6: true
+    node: true
   rules:
     # Possible Errors
     comma-dangle: 1             # disallow or enforce trailing commas (recommended)
