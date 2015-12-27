@@ -12,7 +12,7 @@ module.exports = function(config) {
       'karma-jasmine'
     ],
     browsers: ['Chrome', 'Firefox'],
-    files: ['dist/syncClient.min.js', 'test/integration/*_spec.js'],
+    files: ['dist/syncClient.min.js', 'test/helpers.js', 'test/integration/*_spec.js'],
     preprocessors: {
       'dist/syncClient.min.js': ['commonjs'],
       'test/**/*.js': ['babel', 'commonjs']

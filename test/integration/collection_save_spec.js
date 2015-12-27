@@ -1,4 +1,5 @@
 import SyncClient from '../../dist/syncClient.min.js';
+import {checkExpect} from '../helpers.js';
 
 describe('Collection save', () => {
   let syncClient;
@@ -11,51 +12,6 @@ describe('Collection save', () => {
     syncClient = new SyncClient(dbName, collectionNames, serverUrl);
     collection = syncClient.getCollection(collectionName);
   });
-
-  function checkExpect(done, checkFn, id) {
-    const openDBRequest = window.indexedDB.open(dbName, 1);
-    openDBRequest.onsuccess = function(openDBEvent) {
-      let collectionData;
-      let changeCollectionData;
-      const openDB = openDBEvent.target.result;
-      const transaction = openDB.transaction([collectionName, 'changesDBStore'], 'readonly');
-      const collectionObjectStore = transaction.objectStore(collectionName);
-      const changeCollectionObjectStore = transaction.objectStore('changesDBStore');
-
-      const getRequest = collectionObjectStore.get(id);
-      getRequest.onsuccess = function(e) {
-        collectionData = e.target.result;
-      };
-      getRequest.onerror = function(err) {
-        openDB.close();
-        done.fail(err);
-      };
-
-      const changeRequest = changeCollectionObjectStore.get(id);
-      changeRequest.onsuccess = function(e) {
-        changeCollectionData = e.target.result;
-      };
-      changeRequest.onerror = function(err) {
-        openDB.close();
-        done.fail(err);
-      };
-
-      transaction.oncomplete = function() {
-        openDB.close();
-        checkFn(collectionData, changeCollectionData);
-        done();
-      };
-
-      transaction.onerror = function(err) {
-        openDB.close();
-        done.fail(err);
-      };
-    };
-
-    openDBRequest.onerror = function(err) {
-      done.fail(err);
-    };
-  }
 
   it('should add the given data to the database, to the changes object store and return the id', (done) => {
     const data = {
@@ -73,7 +29,7 @@ describe('Collection save', () => {
         expect(changeCollectionData.changeSet).toEqual(data);
       }
 
-      checkExpect(done, checkFn, id);
+      checkExpect(done, checkFn, dbName, collectionName, id);
     }).catch((err) => {
       done.fail(err);
     });
@@ -95,7 +51,7 @@ describe('Collection save', () => {
           expect(changeCollectionData.changeSet).toEqual(newData);
         }
 
-        checkExpect(done, checkFn, id);
+        checkExpect(done, checkFn, dbName, collectionName, id);
       });
     }).catch((err) => {
       done.fail(err);
@@ -119,7 +75,7 @@ describe('Collection save', () => {
         expect(changeCollectionData.changeSet._id).toBe(id);
       }
 
-      checkExpect(done, checkFn, id);
+      checkExpect(done, checkFn, dbName, collectionName, id);
     }).catch((err) => {
       done.fail(err);
     });
@@ -152,7 +108,7 @@ describe('Collection save', () => {
         expect(changeCollectionData).toBe(undefined);
       }
 
-      checkExpect(done, checkFn, data._id);
+      checkExpect(done, checkFn, dbName, collectionName, data._id);
     });
   });
 
