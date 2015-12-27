@@ -1,5 +1,9 @@
 # SyncClient
 
+[![Code Climate](https://codeclimate.com/github/nponiros/sync_client/badges/gpa.svg)](https://codeclimate.com/github/nponiros/sync_client)
+
+## Synopsis
+
 This module can be used to write data to IndexedDB and later call a synchronization function to synchronize the data in IndexedDB with a server. It was primarily written to work with [SyncServer](https://github.com/nponiros/sync_server) but should work with other servers which offer the same API.
 
 ## Installation
