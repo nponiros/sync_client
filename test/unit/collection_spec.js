@@ -25,13 +25,14 @@ describe('Collection', () => {
     let collection;
     let openDB;
     let openSpy;
+    let saveSpy;
 
     beforeEach(() => {
       openDB = new DBMock.IDBDatabase(dbName, collectionNamesForOpenDB);
       spyOn(openDB, 'close');
       openSpy = spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
       collection = new Collection(collectionName, dbName, collectionNames);
-      spyOn(db, 'save').and.callThrough();
+      saveSpy = spyOn(db, 'save');//.and.callThrough();
       spyOn(db, 'createReadWriteTransaction').and.callThrough();
     });
 
@@ -79,12 +80,19 @@ describe('Collection', () => {
       });
     });
 
-    const tests = ['should reject with an error if the database can not be opened',
-      'should reject with an error if the data cannot be saved'];
-
-    tests.forEach((testDescription) => {
-      it(testDescription, (done) => {
+    const tests = [{
+      description: 'should reject with an error if the database can not be opened', spyFn() {
         openSpy.and.returnValue(getRejectPromise(Error()));
+      }
+    }, {
+      description: 'should reject with an error if the data cannot be saved', spyFn() {
+        saveSpy.and.returnValue(getRejectPromise(Error()));
+      }
+    }];
+
+    tests.forEach((test) => {
+      it(test.description, (done) => {
+        test.spyFn();
         collection.save({}).then(() => {
           done.fail();
         }).catch((err) => {
@@ -99,14 +107,16 @@ describe('Collection', () => {
     let collection;
     let openDB;
     let openSpy;
+    let saveSpy;
+    let removeSpy;
 
     beforeEach(() => {
       openDB = new DBMock.IDBDatabase(dbName, collectionNamesForOpenDB);
       spyOn(openDB, 'close');
       openSpy = spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
       collection = new Collection(collectionName, dbName, collectionNames);
-      spyOn(db, 'save').and.callThrough();
-      spyOn(db, 'remove').and.callThrough();
+      saveSpy = spyOn(db, 'save').and.callThrough();
+      removeSpy = spyOn(db, 'remove').and.callThrough();
       spyOn(db, 'createReadWriteTransaction').and.callThrough();
     });
 
@@ -129,13 +139,23 @@ describe('Collection', () => {
       });
     });
 
-    const tests = ['should reject with an error if the database can not be opened',
-      'should reject with an error if the data cannot be saved',
-      'should reject with an error if the data cannot be removed'];
-
-    tests.forEach((testDescription) => {
-      it(testDescription, (done) => {
+    const tests = [{
+      description: 'should reject with an error if the database can not be opened', spyFn() {
         openSpy.and.returnValue(getRejectPromise(Error()));
+      }
+    }, {
+      description: 'should reject with an error if the data cannot be saved', spyFn() {
+        saveSpy.and.returnValue(getRejectPromise(Error()));
+      }
+    }, {
+      description: 'should reject with an error if the data cannot be removed', spyFn() {
+        removeSpy.and.returnValue(getRejectPromise(Error()));
+      }
+    }];
+
+    tests.forEach((test) => {
+      it(test.description, (done) => {
+        test.spyFn();
         collection.remove(1).then(() => {
           done.fail();
         }).catch((err) => {
