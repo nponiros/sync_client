@@ -20,9 +20,6 @@ module.exports = function(config) {
     babelPreprocessor: {
       options: {
         presets: ['es2015']
-      },
-      sourceFileName: function(file) {
-        return file.originalPath;
       }
     }
   });

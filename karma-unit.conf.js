@@ -1,3 +1,5 @@
+'use strict';
+const isparta = require('isparta');
 module.exports = function(config) {
   config.set({
     basePath: '.',
@@ -22,9 +24,6 @@ module.exports = function(config) {
     babelPreprocessor: {
       options: {
         presets: ['es2015']
-      },
-      sourceFileName: function(file) {
-        return file.originalPath;
       }
     },
     reporters: ['progress', 'coverage'],
@@ -32,7 +31,9 @@ module.exports = function(config) {
     coverageReporter: {
       type: 'html',
       dir: 'coverage/',
-      instrumenters: {isparta: require('isparta')},
+      instrumenters: {
+        isparta
+      },
       instrumenter: {
         '**/*.js': 'isparta'
       },
