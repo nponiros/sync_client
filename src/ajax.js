@@ -13,17 +13,21 @@ function exec(options) {
 
     function handleResponse() {
       if (xhr.status !== 200) {
-        reject(xhr);
+        reject(Error(xhr.statusText));
       }
       resolve(xhr.response);
     }
 
     function handleError() {
-      reject(xhr);
+      if (xhr.status === 0) {
+        reject(Error('Server connection failed'));
+      } else {
+        reject(Error('Some error occurred'));
+      }
     }
 
     function handleAbort() {
-      reject(xhr);
+      reject(Error('Connection aborted'));
     }
 
     xhr.onload = handleResponse;
