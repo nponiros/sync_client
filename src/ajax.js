@@ -14,8 +14,9 @@ function exec(options) {
     function handleResponse() {
       if (xhr.status !== 200) {
         reject(Error(xhr.statusText));
+      } else {
+        resolve(xhr.response);
       }
-      resolve(xhr.response);
     }
 
     function handleError() {
