@@ -24,7 +24,7 @@ npm run build-prod  # Production bundle
 
 ## Basic Usage
 
-The module was made to work with [SystemJS](https://github.com/systemjs/systemjs). It is possible that it also works with other loaders, but that was not tested. 
+The module was made to work with [SystemJS](https://github.com/systemjs/systemjs). It is possible that it also works with other loaders, but that was not tested.
 
 ```js
 import SyncClient from 'syncClient';
@@ -59,7 +59,7 @@ If you want to synchronize your data with a server, you will also need a [SyncSe
 
 ## API
 
-### SyncClient 
+### SyncClient
 
 * constructor(dbName, collectionNames, serverUrl)
   * dbName: the name of the indexedDB database
@@ -73,7 +73,7 @@ If you want to synchronize your data with a server, you will also need a [SyncSe
 * sync()
   * returns a Promise
   * Description: calls upload and download functions to send data to the server and receive new data from the server.
-  
+
 ### Collection
 
 * save(data)
