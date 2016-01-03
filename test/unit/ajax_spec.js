@@ -43,8 +43,8 @@ describe('Ajax post', () => {
   it('should reject the promise if the status is not 200', (done) => {
     promise.then(() => {
       done.fail();
-    }).catch((xhr) => {
-      expect(xhr).not.toBe(undefined);
+    }).catch((err) => {
+      expect(err).toEqual(jasmine.any(Error));
       done();
     });
     request.respondWith({status: 500, response: data});
@@ -53,18 +53,32 @@ describe('Ajax post', () => {
   it('should reject the promise on error', (done) => {
     promise.then(() => {
       done.fail();
-    }).catch((xhr) => {
-      expect(xhr).not.toBe(undefined);
+    }).catch((err) => {
+      expect(err).toEqual(jasmine.any(Error));
+      expect(err.message).toBe('Some error occurred');
       done();
     });
+    request.onerror();
+  });
+
+  it('should reject the promise with a specific error if status is 0', (done) => {
+    promise.then(() => {
+      done.fail();
+    }).catch((err) => {
+      expect(err).toEqual(jasmine.any(Error));
+      expect(err.message).toBe('Server connection failed');
+      done();
+    });
+    request.status = 0;
     request.onerror();
   });
 
   it('should reject the promise on abort', (done) => {
     promise.then(() => {
       done.fail();
-    }).catch((xhr) => {
-      expect(xhr).not.toBe(undefined);
+    }).catch((err) => {
+      expect(err).toEqual(jasmine.any(Error));
+      expect(err.message).toBe('Connection aborted');
       done();
     });
     request.onabort();

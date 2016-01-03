@@ -52,7 +52,7 @@ describe('Collection remove', () => {
     });
   });
 
-  it('should resolve the promise if no object with given id is in the database', (done) => {
+  it('should resolve the promise if no object with given id is in the database. A change object is saved nevertheless', (done) => {
     const id = 10;
     collection.remove(id).then(() => {
       function checkFn(collectionData, changeCollectionData) {
