@@ -4,12 +4,12 @@ export class IDBRequest {
     Object.defineProperty(this, 'onsuccess', {
       set(cb) {
         self.successCB = cb;
-      }
+      },
     });
     Object.defineProperty(this, 'onerror', {
       set(cb) {
         self.errorCB = cb;
-      }
+      },
     });
     this.result = result;
     this.error = null;
@@ -18,11 +18,11 @@ export class IDBRequest {
     this.transaction = transaction;
     this.readyState = 'pending';
     this.internal = {
-      flags
+      flags,
     };
     this._flags = {
       pending: true,
-      done: false
+      done: false,
     };
   }
 
@@ -32,7 +32,7 @@ export class IDBRequest {
     this.readyState = 'done';
     if (this.internal.flags && this.internal.flags.onError) {
       const event = {
-        type: 'error'
+        type: 'error',
       };
       this.result = undefined;
       this.error = Error('Request error');
@@ -43,9 +43,9 @@ export class IDBRequest {
     } else {
       const event = {
         target: {
-          result: this.result
+          result: this.result,
         },
-        type: 'success'
+        type: 'success',
       };
       this.error = null;
       if (this.successCB) {
@@ -142,7 +142,7 @@ export class IDBObjectStore {
     const cursorInternal = {
       keys,
       data,
-      request
+      request,
     };
     if (keys.length === 0) {
       request.result = null;
@@ -161,22 +161,22 @@ export class IDBTransaction {
     this.mode = mode;
     this.internal = internal;
     this._flags = {
-      active: true
+      active: true,
     };
     Object.defineProperty(this, 'oncomplete', {
       set(cb) {
         self.completeCB = cb;
-      }
+      },
     });
     Object.defineProperty(this, 'onerror', {
       set(cb) {
         self.errorCB = cb;
-      }
+      },
     });
     Object.defineProperty(this, 'onabort', {
       set(cb) {
         self.abortCB = cb;
-      }
+      },
     });
     setTimeout(() => {
       // Transaction becomes inactive once the event loop takes over
@@ -226,7 +226,7 @@ export class IDBTransaction {
     const data = this.internal.data[name];
     const objectStoreInternal = {
       data,
-      flags: this.internal.flags
+      flags: this.internal.flags,
     };
     return new IDBObjectStore(this, name, objectStoreInternal);
   }
@@ -239,10 +239,10 @@ export class IDBDatabase {
     this.objectStoreNames = objectStoreNames;
     this.internal = {
       data: {},
-      flags: {}
+      flags: {},
     };
     this._flags = {
-      isClosed: false
+      isClosed: false,
     };
   }
 

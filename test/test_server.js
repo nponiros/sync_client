@@ -1,4 +1,4 @@
-/*eslint-env node */
+/* eslint-env node */
 
 'use strict';
 
@@ -25,7 +25,7 @@ if (action === 'start') {
     });
     res.send({
       changeIds: ids,
-      lastUpdateTS: Date.now()
+      lastUpdateTS: Date.now(),
     });
   });
 
@@ -35,13 +35,13 @@ if (action === 'start') {
     operation: 'UPDATE',
     changeSet: {
       _id: 1,
-      title: 'title'
-    }
+      title: 'title',
+    },
   }];
 
   expressApp.post('/api/v1/download', (req, res) => {
     res.send({
-      changes: downloadData
+      changes: downloadData,
     });
   });
 

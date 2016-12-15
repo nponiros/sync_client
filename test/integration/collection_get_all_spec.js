@@ -15,11 +15,11 @@ describe('Collection getOne', () => {
   it('should return the data object matching the given id', (done) => {
     const data1 = {
       _id: 1,
-      title: 'testTitle'
+      title: 'testTitle',
     };
     const data2 = {
       _id: 2,
-      title: 'testTitle2'
+      title: 'testTitle2',
     };
     collection.save(data1).then(() => {
       return collection.save(data2);

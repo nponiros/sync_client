@@ -1,5 +1,5 @@
 import SyncClient from '../../dist/syncClient.min.js';
-import {checkExpect} from '../helpers.js';
+import { checkExpect } from '../helpers.js';
 
 describe('Collection save', () => {
   let syncClient;
@@ -16,7 +16,7 @@ describe('Collection save', () => {
   it('should add the given data to the database, to the changes object store and return the id', (done) => {
     const data = {
       _id: 1,
-      title: 'testTitle'
+      title: 'testTitle',
     };
     collection.save(data).then((id) => {
       expect(id).toBe(data._id);
@@ -38,12 +38,12 @@ describe('Collection save', () => {
   it('should update the data if the given id already exists in the database', (done) => {
     const data = {
       _id: 1,
-      title: 'testTitle'
+      title: 'testTitle',
     };
     collection.save(data).then((id) => {
       const newData = {
         _id: id,
-        title: 'testTitle 2'
+        title: 'testTitle 2',
       };
       return collection.save(newData).then(() => {
         function checkFn(collectionData, changeCollectionData) {
@@ -60,7 +60,7 @@ describe('Collection save', () => {
 
   it('should add the given data to the database, to the changes object store and return the id even if we do not give an id to the data', (done) => {
     const data = {
-      title: 'testTitle'
+      title: 'testTitle',
     };
     collection.save(data).then((id) => {
       expect(id).not.toBe(undefined);
@@ -96,7 +96,7 @@ describe('Collection save', () => {
     const data = {
       _id: 10,
       noClone() {
-      }
+      },
     };
     collection.save(data).then(() => {
       done.fail();
@@ -115,7 +115,7 @@ describe('Collection save', () => {
   it('should reject the promise if data has an invalid key as id', (done) => {
     const data = {
       _id: {},
-      title: 'testTitle'
+      title: 'testTitle',
     };
     collection.save(data).then(() => {
       done.fail();

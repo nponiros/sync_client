@@ -1,5 +1,5 @@
-import {download} from '../../src/download.js';
-import {CHANGES_DB_STORE_NAME, API_V1_DOWNLOAD, LAST_UPDATE_TS, UPDATE_OPERATION, DELETE_OPERATION} from '../../src/constants.js';
+import { download } from '../../src/download.js';
+import { CHANGES_DB_STORE_NAME, API_V1_DOWNLOAD, LAST_UPDATE_TS, UPDATE_OPERATION, DELETE_OPERATION } from '../../src/constants.js';
 import * as db from '../../src/indexeddb_connector.js';
 import * as ajax from '../../src/ajax.js';
 import * as DBMock from '../indexeddb_mock.js';
@@ -38,21 +38,20 @@ describe('download', () => {
     localStorage.setItem(LAST_UPDATE_TS, lastUpdateTS);
   });
 
-
   it('should remove/save data into the store defined by the change object', (done) => {
     const changeObjects = [{
       _id: 1,
       operation: DELETE_OPERATION,
-      collectionName
+      collectionName,
     }, {
       _id: 2,
       operation: UPDATE_OPERATION,
       collectionName,
       changeSet: {
-        _id: 2
-      }
+        _id: 2,
+      },
     }];
-    spyOn(ajax, 'post').and.returnValue(getResolvePromise({changes: changeObjects}));
+    spyOn(ajax, 'post').and.returnValue(getResolvePromise({ changes: changeObjects }));
     download(dbName, collectionNames, serverUrl).then(() => {
       expect(db.open).toHaveBeenCalledWith(dbName, collectionNames);
       expect(db.createReadWriteTransaction.calls.first().args[0]).toEqual(openDB);
@@ -64,7 +63,7 @@ describe('download', () => {
       expect(db.open).toHaveBeenCalledTimes(1);
       expect(ajax.post).toHaveBeenCalledWith(API_V1_DOWNLOAD, {
         lastUpdateTS,
-        collectionNames: [collectionName]
+        collectionNames: [collectionName],
       });
       expect(openDB.close).toHaveBeenCalledTimes(1);
       done();
@@ -78,8 +77,8 @@ describe('download', () => {
       changes: [{
         _id: 1,
         operation: 'unknown',
-        collectionName: 'testCollection'
-      }]
+        collectionName: 'testCollection',
+      }],
     }));
     download(dbName, collectionNames, serverUrl).then(() => {
       done.fail();
@@ -93,16 +92,16 @@ describe('download', () => {
     const changeObjects = [{
       _id: 1,
       operation: DELETE_OPERATION,
-      collectionName
+      collectionName,
     }, {
       _id: 2,
       operation: UPDATE_OPERATION,
       collectionName,
       changeSet: {
-        _id: 2
-      }
+        _id: 2,
+      },
     }];
-    spyOn(ajax, 'post').and.returnValue(getResolvePromise({changes: changeObjects}));
+    spyOn(ajax, 'post').and.returnValue(getResolvePromise({ changes: changeObjects }));
     openSpy.and.returnValue(getRejectPromise(Error()));
     download(dbName, collectionNames, serverUrl).then(() => {
       done.fail();
@@ -123,7 +122,7 @@ describe('download', () => {
   });
 
   it('should not open the DB if the server sent empty changes array', (done) => {
-    spyOn(ajax, 'post').and.returnValue(getResolvePromise({changes: []}));
+    spyOn(ajax, 'post').and.returnValue(getResolvePromise({ changes: [] }));
     download(dbName, collectionNames, serverUrl).then(() => {
       expect(db.open).not.toHaveBeenCalled();
       done();

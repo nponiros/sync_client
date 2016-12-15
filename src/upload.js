@@ -1,7 +1,7 @@
-import {CHANGES_DB_STORE_NAME, API_V1_UPLOAD, LAST_UPDATE_TS} from './constants.js';
+import { CHANGES_DB_STORE_NAME, API_V1_UPLOAD, LAST_UPDATE_TS } from './constants.js';
 import * as IndexedDB from './indexeddb_connector.js';
 
-import {post} from './ajax.js';
+import { post } from './ajax.js';
 
 export function upload(dbName, collectionNames, serverUrl) {
 // Server always has the change of the last client which synced -> changes could be overwritten
@@ -20,7 +20,7 @@ export function upload(dbName, collectionNames, serverUrl) {
       if (changeObjects.length === 0) {
         resolve();
       } else {
-        return post(`${serverUrl}${API_V1_UPLOAD}`, {changes: changeObjects});
+        return post(`${serverUrl}${API_V1_UPLOAD}`, { changes: changeObjects });
       }
     }).then((resp) => {
       IndexedDB.open(dbName, collectionNames).then((openDB) => {
@@ -36,7 +36,7 @@ export function upload(dbName, collectionNames, serverUrl) {
 
         const transaction = IndexedDB.createReadWriteTransaction(openDB, [CHANGES_DB_STORE_NAME], onTransactionComplete, onTransactionError);
         const objectStore = transaction.objectStore(CHANGES_DB_STORE_NAME);
-        const {changeIds, lastUpdateTS} = resp;
+        const { changeIds, lastUpdateTS } = resp;
 
         const promises = changeIds.map((id) => {
           return IndexedDB.remove(objectStore, id);

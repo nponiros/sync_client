@@ -1,5 +1,5 @@
 import SyncClient from '../../dist/syncClient.min.js';
-import {checkExpect} from '../helpers.js';
+import { checkExpect } from '../helpers.js';
 
 describe('Collection remove', () => {
   let syncClient;
@@ -21,7 +21,7 @@ describe('Collection remove', () => {
       expect(err).toEqual(jasmine.any(DOMException));
       expect(err.name).toBe('DataError');
       const openDBRequest = window.indexedDB.open(dbName, 1);
-      openDBRequest.onsuccess = function(openDBEvent) {
+      openDBRequest.onsuccess = function (openDBEvent) {
         const openDB = openDBEvent.target.result;
         const transaction = openDB.transaction(['changesDBStore'], 'readonly');
         const objectStore = transaction.objectStore('changesDBStore');
@@ -29,7 +29,7 @@ describe('Collection remove', () => {
 
         const results = [];
 
-        cursorRequest.onsuccess = function(e) {
+        cursorRequest.onsuccess = function (e) {
           const cursor = e.target.result;
           if (cursor && cursor !== null) {
             results.push(cursor.value);
@@ -41,12 +41,12 @@ describe('Collection remove', () => {
           }
         };
 
-        cursorRequest.onerror = function(e) {
+        cursorRequest.onerror = function (e) {
           openDB.close();
           done.fail(e);
         };
       };
-      openDBRequest.onerror = function(e) {
+      openDBRequest.onerror = function (e) {
         done.fail(e);
       };
     });
@@ -91,7 +91,7 @@ describe('Collection remove', () => {
   it('should remove the data object matching the key from the collection and add a change object to the changes store', (done) => {
     const data = {
       _id: 1,
-      title: 'testTitle'
+      title: 'testTitle',
     };
     collection.save(data).then((id) => {
       return collection.remove(id).then(() => {

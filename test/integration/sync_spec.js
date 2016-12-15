@@ -14,7 +14,7 @@ describe('sync', () => {
 
   function checkExpect(done, checkFn) {
     const openDBRequest = window.indexedDB.open(dbName, 1);
-    openDBRequest.onsuccess = function(openDBEvent) {
+    openDBRequest.onsuccess = function (openDBEvent) {
       const openDB = openDBEvent.target.result;
       const transaction = openDB.transaction([collectionName, 'changesDBStore'], 'readonly');
       const collectionObjectStore = transaction.objectStore(collectionName);
@@ -22,45 +22,45 @@ describe('sync', () => {
 
       const collectionData = [];
       const collectionRequest = collectionObjectStore.openCursor();
-      collectionRequest.onsuccess = function(e) {
+      collectionRequest.onsuccess = function (e) {
         const cursor = e.target.result;
         if (cursor && cursor !== null) {
           collectionData.push(cursor.value);
           cursor.continue();
         }
       };
-      collectionRequest.onerror = function() {
+      collectionRequest.onerror = function () {
         openDB.close();
         done.fail(collectionRequest.error);
       };
 
       const changeCollectionData = [];
       const changesRequest = changeCollectionObjectStore.openCursor();
-      changesRequest.onsuccess = function(e) {
+      changesRequest.onsuccess = function (e) {
         const cursor = e.target.result;
         if (cursor && cursor !== null) {
           changeCollectionData.push(cursor.value);
           cursor.continue();
         }
       };
-      changesRequest.onerror = function() {
+      changesRequest.onerror = function () {
         openDB.close();
         done.fail(changesRequest.error);
       };
 
-      transaction.oncomplete = function() {
+      transaction.oncomplete = function () {
         openDB.close();
         checkFn(collectionData, changeCollectionData);
         done();
       };
 
-      transaction.onerror = function(err) {
+      transaction.onerror = function (err) {
         openDB.close();
         done.fail(err);
       };
     };
 
-    openDBRequest.onerror = function() {
+    openDBRequest.onerror = function () {
       done.fail(openDBRequest.error);
     };
   }
@@ -68,11 +68,11 @@ describe('sync', () => {
   it('should get data from the server, set them in the db and upload data and remove them from the changes collection', (done) => {
     const dataToSave = {
       _id: 2,
-      title: 'Test title 3'
+      title: 'Test title 3',
     };
     const serverData = {
       _id: 1,
-      title: 'title'
+      title: 'title',
     };
     collection.save(dataToSave).then(() => {
       syncClient.sync().then(() => {

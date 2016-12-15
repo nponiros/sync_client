@@ -1,6 +1,6 @@
 import SyncClient from '../../src/sync_client.js';
 import Collection from '../../src/collection.js';
-import {CHANGES_DB_STORE_NAME} from '../../src/constants.js';
+import { CHANGES_DB_STORE_NAME } from '../../src/constants.js';
 import * as uploadFn from '../../src/upload.js';
 import * as downloadFn from '../../src/download.js';
 
@@ -22,7 +22,6 @@ describe('SyncClient', () => {
       reject(toRejectWith);
     });
   }
-
 
   beforeEach(() => {
     syncClient = new SyncClient(dbName, collectionNames, serverUrl);

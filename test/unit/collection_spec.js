@@ -1,5 +1,5 @@
 import Collection from '../../src/collection.js';
-import {CHANGES_DB_STORE_NAME, DELETE_OPERATION, UPDATE_OPERATION} from '../../src/constants.js';
+import { CHANGES_DB_STORE_NAME, DELETE_OPERATION, UPDATE_OPERATION } from '../../src/constants.js';
 import * as db from '../../src/indexeddb_connector.js';
 import * as DBMock from '../indexeddb_mock.js';
 
@@ -32,13 +32,13 @@ describe('Collection', () => {
       spyOn(openDB, 'close');
       openSpy = spyOn(db, 'open').and.returnValue(getResolvePromise(openDB));
       collection = new Collection(collectionName, dbName, collectionNames);
-      saveSpy = spyOn(db, 'save');//.and.callThrough();
+      saveSpy = spyOn(db, 'save');// .and.callThrough();
       spyOn(db, 'createReadWriteTransaction').and.callThrough();
     });
 
     it('should open the database, create a read/write transaction, call save for the change collection, call save for this collection and close the db', (done) => {
       const data = {
-        _id: 1
+        _id: 1,
       };
       collection.save(data).then((result) => {
         expect(db.open).toHaveBeenCalledWith(dbName, collectionNames);
@@ -60,7 +60,7 @@ describe('Collection', () => {
 
     it('should add an _id to the given data if the _id is not defined', (done) => {
       const data = {
-        data: 'testData'
+        data: 'testData',
       };
 
       collection.save(data).then((result) => {
@@ -83,11 +83,11 @@ describe('Collection', () => {
     const tests = [{
       description: 'should reject with an error if the database can not be opened', spyFn() {
         openSpy.and.returnValue(getRejectPromise(Error()));
-      }
+      },
     }, {
       description: 'should reject with an error if the data cannot be saved', spyFn() {
         saveSpy.and.returnValue(getRejectPromise(Error()));
-      }
+      },
     }];
 
     tests.forEach((test) => {
@@ -142,15 +142,15 @@ describe('Collection', () => {
     const tests = [{
       description: 'should reject with an error if the database can not be opened', spyFn() {
         openSpy.and.returnValue(getRejectPromise(Error()));
-      }
+      },
     }, {
       description: 'should reject with an error if the data cannot be saved', spyFn() {
         saveSpy.and.returnValue(getRejectPromise(Error()));
-      }
+      },
     }, {
       description: 'should reject with an error if the data cannot be removed', spyFn() {
         removeSpy.and.returnValue(getRejectPromise(Error()));
-      }
+      },
     }];
 
     tests.forEach((test) => {
@@ -180,15 +180,15 @@ describe('Collection', () => {
 
     it('should open the database, create a read transaction, close the db and return data', (done) => {
       const data = [{
-        _id: 1
+        _id: 1,
       }, {
-        _id: 2
+        _id: 2,
       }];
       openDB.setData({
         testCollection: {
           1: data[0],
-          2: data[1]
-        }
+          2: data[1],
+        },
       });
       collection.getAll().then((result) => {
         expect(db.open).toHaveBeenCalledWith(dbName, collectionNames);
@@ -204,8 +204,8 @@ describe('Collection', () => {
     it('should close the db and return an error if getAll fails', (done) => {
       openDB.setFlags({
         request: {
-          onError: true
-        }
+          onError: true,
+        },
       });
       collection.getAll().then(() => {
         done.fail();
@@ -231,12 +231,12 @@ describe('Collection', () => {
 
     it('should open the database, create a read transaction, close the db and return data', (done) => {
       const data = {
-        _id: id
+        _id: id,
       };
       openDB.setData({
         testCollection: {
-          1: data
-        }
+          1: data,
+        },
       });
       collection.getOne(id).then((result) => {
         expect(db.open).toHaveBeenCalledWith(dbName, collectionNames);
@@ -252,8 +252,8 @@ describe('Collection', () => {
     it('should close the db and return an error if getOne fails', (done) => {
       openDB.setFlags({
         request: {
-          onError: true
-        }
+          onError: true,
+        },
       });
       collection.getOne(id).then(() => {
         done.fail();

@@ -1,5 +1,5 @@
 import * as db from '../../src/indexeddb_connector.js';
-import {IDBTransactionModes, CHANGES_DB_STORE_NAME} from '../../src/constants.js';
+import { IDBTransactionModes, CHANGES_DB_STORE_NAME } from '../../src/constants.js';
 import * as DBMock from '../indexeddb_mock.js';
 
 describe('IndexedDB Connector', () => {
@@ -23,7 +23,7 @@ describe('IndexedDB Connector', () => {
   describe('save', () => {
     it('should return the id of the saved object', (done) => {
       const data = {
-        _id: 1
+        _id: 1,
       };
       const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
       const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_WRITE);
@@ -38,13 +38,13 @@ describe('IndexedDB Connector', () => {
 
     it('should return an error object if the error callback gets called', (done) => {
       const data = {
-        _id: 1
+        _id: 1,
       };
       const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
       dbMock.setFlags({
         request: {
-          onError: true
-        }
+          onError: true,
+        },
       });
       const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_WRITE);
       const objectStore = trans.objectStore('testStore');
@@ -58,7 +58,7 @@ describe('IndexedDB Connector', () => {
 
     it('should reject the promise if an exception is thrown and abort the transaction', (done) => {
       const data = {
-        _id: 1
+        _id: 1,
       };
       const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
       const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_WRITE);
@@ -94,8 +94,8 @@ describe('IndexedDB Connector', () => {
       const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
       dbMock.setFlags({
         request: {
-          onError: true
-        }
+          onError: true,
+        },
       });
       const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_ONLY);
       const objectStore = trans.objectStore('testStore');
@@ -127,13 +127,13 @@ describe('IndexedDB Connector', () => {
   describe('getOne', () => {
     it('should return an object matching the id', (done) => {
       const testData = {
-        _id: 1
+        _id: 1,
       };
       const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
       dbMock.setData({
         testStore: {
-          1: testData
-        }
+          1: testData,
+        },
       });
       const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_ONLY);
       const objectStore = trans.objectStore('testStore');
@@ -149,12 +149,12 @@ describe('IndexedDB Connector', () => {
       const id = 1;
       const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
       dbMock.setData({
-        testStore: {}
+        testStore: {},
       });
       dbMock.setFlags({
         request: {
-          onError: true
-        }
+          onError: true,
+        },
       });
       const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_ONLY);
       const objectStore = trans.objectStore('testStore');
@@ -170,16 +170,16 @@ describe('IndexedDB Connector', () => {
   describe('getAll', () => {
     it('should return an array of objects', (done) => {
       const testData = [{
-        _id: 1
+        _id: 1,
       }, {
-        _id: 2
+        _id: 2,
       }];
       const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
       dbMock.setData({
         testStore: {
           1: testData[0],
-          2: testData[1]
-        }
+          2: testData[1],
+        },
       });
       const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_ONLY);
       const objectStore = trans.objectStore('testStore');
@@ -194,7 +194,7 @@ describe('IndexedDB Connector', () => {
     it('should return an empty array if we have no data in the store', (done) => {
       const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
       dbMock.setData({
-        testStore: {}
+        testStore: {},
       });
       const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_ONLY);
       const objectStore = trans.objectStore('testStore');
@@ -209,12 +209,12 @@ describe('IndexedDB Connector', () => {
     it('should return an error object if the error callback gets called', (done) => {
       const dbMock = new DBMock.IDBDatabase('testDB', ['testStore']);
       dbMock.setData({
-        testStore: {}
+        testStore: {},
       });
       dbMock.setFlags({
         request: {
-          onError: true
-        }
+          onError: true,
+        },
       });
       const trans = dbMock.transaction(['testStore'], IDBTransactionModes.READ_ONLY);
       const objectStore = trans.objectStore('testStore');
@@ -232,7 +232,7 @@ describe('IndexedDB Connector', () => {
       const openDB = {
         transaction() {
           return {};
-        }
+        },
       };
       spyOn(openDB, 'transaction').and.callThrough();
       const dbStoreNames = ['testCollection'];
@@ -249,7 +249,7 @@ describe('IndexedDB Connector', () => {
       openDB = {
         transaction() {
           return {};
-        }
+        },
       };
       spyOn(openDB, 'transaction').and.callThrough();
     });

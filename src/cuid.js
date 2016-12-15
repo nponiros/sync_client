@@ -1,4 +1,4 @@
-/*eslint guard-for-in:0, no-unused-vars: 0*/
+/* eslint guard-for-in:0, no-unused-vars: 0 */
 /**
  * cuid.js
  * Collision-resistant UID generator for browsers and node.

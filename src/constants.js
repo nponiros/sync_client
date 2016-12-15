@@ -2,7 +2,7 @@ export const CHANGES_DB_STORE_NAME = 'changesDBStore';
 export const IDBTransactionModes = {
   'READ_ONLY': 'readonly',
   'READ_WRITE': 'readwrite',
-  'VERSION_CHANGE': 'versionchange'
+  'VERSION_CHANGE': 'versionchange',
 };
 
 export const UPDATE_OPERATION = 'UPDATE';

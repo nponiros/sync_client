@@ -1,13 +1,13 @@
-import {API_V1_DOWNLOAD, LAST_UPDATE_TS, UPDATE_OPERATION, DELETE_OPERATION} from './constants.js';
+import { API_V1_DOWNLOAD, LAST_UPDATE_TS, UPDATE_OPERATION, DELETE_OPERATION } from './constants.js';
 
 import * as IndexedDB from './indexeddb_connector.js';
 
-import {post} from './ajax.js';
+import { post } from './ajax.js';
 
 export function download(dbName, collectionNames, serverUrl) {
   return new Promise((resolve, reject) => {
     const lastUpdateTS = localStorage.getItem(LAST_UPDATE_TS);
-    post(`${serverUrl}${API_V1_DOWNLOAD}`, {lastUpdateTS, collectionNames}).then((resp) => {
+    post(`${serverUrl}${API_V1_DOWNLOAD}`, { lastUpdateTS, collectionNames }).then((resp) => {
       if (resp.changes.length > 0) {
         return resp.changes;
       } else {

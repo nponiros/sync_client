@@ -15,7 +15,7 @@ describe('Collection getOne', () => {
   it('should return the data object matching the given id', (done) => {
     const data = {
       _id: 1,
-      title: 'testTitle'
+      title: 'testTitle',
     };
     collection.save(data).then((id) => {
       return collection.getOne(id).then((result) => {

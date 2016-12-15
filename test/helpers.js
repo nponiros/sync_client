@@ -1,6 +1,6 @@
 export function checkExpect(done, checkFn, dbName, collectionName, id) {
   const openDBRequest = window.indexedDB.open(dbName, 1);
-  openDBRequest.onsuccess = function(openDBEvent) {
+  openDBRequest.onsuccess = function (openDBEvent) {
     let collectionData;
     let changeCollectionData;
     const openDB = openDBEvent.target.result;
@@ -9,36 +9,36 @@ export function checkExpect(done, checkFn, dbName, collectionName, id) {
     const changeCollectionObjectStore = transaction.objectStore('changesDBStore');
 
     const getRequest = collectionObjectStore.get(id);
-    getRequest.onsuccess = function(e) {
+    getRequest.onsuccess = function (e) {
       collectionData = e.target.result;
     };
-    getRequest.onerror = function(err) {
+    getRequest.onerror = function (err) {
       openDB.close();
       done.fail(err);
     };
 
     const changeRequest = changeCollectionObjectStore.get(id);
-    changeRequest.onsuccess = function(e) {
+    changeRequest.onsuccess = function (e) {
       changeCollectionData = e.target.result;
     };
-    changeRequest.onerror = function(err) {
+    changeRequest.onerror = function (err) {
       openDB.close();
       done.fail(err);
     };
 
-    transaction.oncomplete = function() {
+    transaction.oncomplete = function () {
       openDB.close();
       checkFn(collectionData, changeCollectionData);
       done();
     };
 
-    transaction.onerror = function(err) {
+    transaction.onerror = function (err) {
       openDB.close();
       done.fail(err);
     };
   };
 
-  openDBRequest.onerror = function(err) {
+  openDBRequest.onerror = function (err) {
     done.fail(err);
   };
 }

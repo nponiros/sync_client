@@ -1,6 +1,6 @@
 import Collection from './collection.js';
-import {upload} from './upload.js';
-import {download} from './download.js';
+import { upload } from './upload.js';
+import { download } from './download.js';
 
 export default class SyncClient {
   constructor(dbName, collectionNames, serverUrl) {

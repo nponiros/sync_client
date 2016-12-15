@@ -1,4 +1,4 @@
-import {IDBTransactionModes, CHANGES_DB_STORE_NAME} from './constants.js';
+import { IDBTransactionModes, CHANGES_DB_STORE_NAME } from './constants.js';
 
 const version = 1;
 
@@ -7,11 +7,11 @@ export function open(dbName, dbStoreNames) {
     const request = indexedDB.open(dbName, version);
     const storeNames = [CHANGES_DB_STORE_NAME, ...dbStoreNames];
 
-    request.onupgradeneeded = function(e) {
+    request.onupgradeneeded = function (e) {
       const db = e.target.result;
       const options = {
         keyPath: '_id',
-        autoIncrement: false
+        autoIncrement: false,
       };
 
       // Create stores
@@ -24,12 +24,12 @@ export function open(dbName, dbStoreNames) {
       });
     };
 
-    request.onsuccess = function(e) {
+    request.onsuccess = function (e) {
       const db = e.target.result;
       resolve(db);
     };
 
-    request.onerror = function(e) {
+    request.onerror = function (e) {
       reject(e);
     };
   });
@@ -46,11 +46,11 @@ export function createReadTransaction(db, dbStoreNames) {
 
 export function createReadWriteTransaction(db, dbStoreNames, onComplete, onError) {
   const transaction = createTransaction(db, dbStoreNames, IDBTransactionModes.READ_WRITE);
-  transaction.oncomplete = function() {
+  transaction.oncomplete = function () {
     onComplete();
   };
 
-  transaction.onerror = function(e) {
+  transaction.onerror = function (e) {
     onError(e);
   };
 
@@ -62,7 +62,7 @@ export function getAll(objectStore) {
     const data = [];
     const cursor = objectStore.openCursor();
 
-    cursor.onsuccess = function(e) {
+    cursor.onsuccess = function (e) {
       const result = e.target.result;
 
       if (result && result !== null) {
@@ -73,7 +73,7 @@ export function getAll(objectStore) {
       }
     };
 
-    cursor.onerror = function(e) {
+    cursor.onerror = function (e) {
       reject(e);
     };
   });
@@ -83,11 +83,11 @@ export function getOne(objectStore, id) {
   return new Promise((resolve, reject) => {
     const request = objectStore.get(id);
 
-    request.onsuccess = function(e) {
+    request.onsuccess = function (e) {
       resolve(e.target.result);
     };
 
-    request.onerror = function(e) {
+    request.onerror = function (e) {
       reject(e);
     };
   });
@@ -98,11 +98,11 @@ export function remove(objectStore, id) {
     try {
       const request = objectStore.delete(id);
 
-      request.onsuccess = function() {
+      request.onsuccess = function () {
         resolve();
       };
 
-      request.onerror = function(e) {
+      request.onerror = function (e) {
         reject(e);
       };
     } catch (e) {
@@ -116,11 +116,11 @@ export function save(objectStore, data) {
   return new Promise((resolve, reject) => {
     try {
       const request = objectStore.put(data);
-      request.onsuccess = function() {
+      request.onsuccess = function () {
         resolve(data._id);
       };
 
-      request.onerror = function(e) {
+      request.onerror = function (e) {
         reject(e);
       };
     } catch (e) {

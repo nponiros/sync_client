@@ -1,5 +1,5 @@
-import {upload} from '../../src/upload.js';
-import {CHANGES_DB_STORE_NAME, API_V1_UPLOAD, LAST_UPDATE_TS} from '../../src/constants.js';
+import { upload } from '../../src/upload.js';
+import { CHANGES_DB_STORE_NAME, API_V1_UPLOAD, LAST_UPDATE_TS } from '../../src/constants.js';
 import * as db from '../../src/indexeddb_connector.js';
 import * as ajax from '../../src/ajax.js';
 import * as DBMock from '../indexeddb_mock.js';
@@ -39,20 +39,19 @@ describe('upload', () => {
     removeSpy = spyOn(db, 'remove').and.callThrough();
   });
 
-
   it('should open the db, call getAll, close the db, send a server request with the data and update the stores with the data from the server', (done) => {
     const data = [{
-      _id: 1
+      _id: 1,
     }, {
-      _id: 2
+      _id: 2,
     }];
     openDB.setData({
       [CHANGES_DB_STORE_NAME]: {
         1: data[0],
-        2: data[1]
-      }
+        2: data[1],
+      },
     });
-    spyOn(ajax, 'post').and.returnValue({lastUpdateTS: 1, changeIds: [1, 2]});
+    spyOn(ajax, 'post').and.returnValue({ lastUpdateTS: 1, changeIds: [1, 2] });
     upload(dbName, collectionNames, serverUrl).then(() => {
       expect(db.open).toHaveBeenCalledWith(dbName, collectionNames);
       expect(db.createReadTransaction).toHaveBeenCalledWith(openDB, [CHANGES_DB_STORE_NAME]);
@@ -62,7 +61,7 @@ describe('upload', () => {
       expect(typeof db.createReadWriteTransaction.calls.first().args[3]).toBe('function');
       expect(db.remove).toHaveBeenCalledTimes(2);
       expect(db.open).toHaveBeenCalledTimes(2);
-      expect(ajax.post).toHaveBeenCalledWith(API_V1_UPLOAD, {changes: data});
+      expect(ajax.post).toHaveBeenCalledWith(API_V1_UPLOAD, { changes: data });
       expect(openDB.close).toHaveBeenCalledTimes(2);
       done();
     }).catch((err) => {
@@ -72,18 +71,18 @@ describe('upload', () => {
 
   it('should add the lastUpdateTS into localStorage', (done) => {
     const data = [{
-      _id: 1
+      _id: 1,
     }, {
-      _id: 2
+      _id: 2,
     }];
     openDB.setData({
       [CHANGES_DB_STORE_NAME]: {
         1: data[0],
-        2: data[1]
-      }
+        2: data[1],
+      },
     });
     const lastUpdateTS = 1;
-    spyOn(ajax, 'post').and.returnValue({lastUpdateTS, changeIds: [1, 2]});
+    spyOn(ajax, 'post').and.returnValue({ lastUpdateTS, changeIds: [1, 2] });
     upload(dbName, collectionNames, serverUrl).then(() => {
       expect(localStorage.getItem(LAST_UPDATE_TS)).toBe('1');
       done();
@@ -104,15 +103,15 @@ describe('upload', () => {
 
   it('should reject the promise if posting the data failed', (done) => {
     const data = [{
-      _id: 1
+      _id: 1,
     }, {
-      _id: 2
+      _id: 2,
     }];
     openDB.setData({
       [CHANGES_DB_STORE_NAME]: {
         1: data[0],
-        2: data[1]
-      }
+        2: data[1],
+      },
     });
     spyOn(ajax, 'post').and.returnValue(getRejectPromise(Error()));
     upload(dbName, collectionNames, serverUrl).then(() => {
@@ -125,7 +124,7 @@ describe('upload', () => {
 
   it('should not try to post data if no data to send are available', (done) => {
     openDB.setData({
-      [CHANGES_DB_STORE_NAME]: {}
+      [CHANGES_DB_STORE_NAME]: {},
     });
     spyOn(ajax, 'post');
     upload(dbName, collectionNames, serverUrl).then(() => {
@@ -148,17 +147,17 @@ describe('upload', () => {
 
   it('should reject the promise if removing data from the database failed. DB should also be closed', (done) => {
     removeSpy.and.returnValue(getRejectPromise(Error()));
-    spyOn(ajax, 'post').and.returnValue({lastUpdateTS: 1, changeIds: [1, 2]});
+    spyOn(ajax, 'post').and.returnValue({ lastUpdateTS: 1, changeIds: [1, 2] });
     const data = [{
-      _id: 1
+      _id: 1,
     }, {
-      _id: 2
+      _id: 2,
     }];
     openDB.setData({
       [CHANGES_DB_STORE_NAME]: {
         1: data[0],
-        2: data[1]
-      }
+        2: data[1],
+      },
     });
     upload(dbName, collectionName, serverUrl).then(() => {
       done.fail();

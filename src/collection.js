@@ -1,8 +1,8 @@
 import cuid from './cuid.js';
 
-import {CHANGES_DB_STORE_NAME} from './constants.js';
+import { CHANGES_DB_STORE_NAME } from './constants.js';
 import * as IndexedDB from './indexeddb_connector.js';
-import {createUpdateChangeObject, createRemoveChangeObject} from './change_object_helpers.js';
+import { createUpdateChangeObject, createRemoveChangeObject } from './change_object_helpers.js';
 
 export default class Collection {
   constructor(collectionName, dbName, dbCollectionNames) {

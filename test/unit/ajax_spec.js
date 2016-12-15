@@ -1,4 +1,4 @@
-import {post} from '../../src/ajax.js';
+import { post } from '../../src/ajax.js';
 
 describe('Ajax post', () => {
   jasmine.Ajax.install();
@@ -8,7 +8,7 @@ describe('Ajax post', () => {
   const url = 'testUrl';
   const data = {
     title: 'testTitle',
-    _id: 1
+    _id: 1,
   };
 
   beforeEach(() => {
@@ -23,7 +23,7 @@ describe('Ajax post', () => {
     }).catch((err) => {
       done.fail(err);
     });
-    request.respondWith({status: 200, response: data});
+    request.respondWith({ status: 200, response: data });
   });
 
   it('should set the url to the given url and the method to POST', () => {
@@ -47,7 +47,7 @@ describe('Ajax post', () => {
       expect(err).toEqual(jasmine.any(Error));
       done();
     });
-    request.respondWith({status: 500, response: data});
+    request.respondWith({ status: 500, response: data });
   });
 
   it('should reject the promise on error', (done) => {

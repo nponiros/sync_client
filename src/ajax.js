@@ -1,7 +1,7 @@
 function exec(options) {
   const promise = new Promise((resolve, reject) => {
     const method = 'POST';
-    const {data, url} = options;
+    const { data, url } = options;
 
     const xhr = new XMLHttpRequest();
     xhr.open(method, url);
@@ -42,5 +42,5 @@ function exec(options) {
 }
 
 export function post(url, data) {
-  return exec({url, data});
+  return exec({ url, data });
 }
