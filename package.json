@@ -50,5 +50,8 @@
     "IndexedDB",
     "offline",
     "synchronization"
-  ]
+  ],
+  "dependencies": {
+    "dexie": "1.5.1"
+  }
 }
