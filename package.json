@@ -52,6 +52,7 @@
     "synchronization"
   ],
   "dependencies": {
-    "dexie": "2.0.0-beta.6"
+    "dexie": "2.0.0-beta.6",
+    "dexie-syncable": "0.2.1"
   }
 }
