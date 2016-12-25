@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
-  entry: './src/sync_client.js',
+  entry: './src/index.js',
   devtool: 'source-map',
   output: {
     path: path.join(__dirname, 'dist'),
@@ -24,6 +24,9 @@ module.exports = {
         },
       },
     ],
+  },
+  performance: {
+    hints: false,
   },
   plugins: [
     new webpack.DefinePlugin({

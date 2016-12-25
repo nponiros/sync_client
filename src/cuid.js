@@ -47,7 +47,9 @@ function globalCount() {
 }
 
 function browserPrint() {
-  const mimeTypesUAString = (navigator.mimeTypes.length + navigator.userAgent.length).toString(base);
+  const mimeTypesUAString = (
+    navigator.mimeTypes.length + navigator.userAgent.length
+  ).toString(base);
   return pad(mimeTypesUAString + globalCount().toString(base), 4);
 }
 
