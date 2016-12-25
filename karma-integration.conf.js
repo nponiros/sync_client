@@ -1,26 +1,33 @@
-module.exports = function(config) {
+'use strict';
+
+const webpackConfig = require('./webpack.dev.config');
+
+webpackConfig.entry = undefined;
+webpackConfig.output = undefined;
+
+module.exports = function (config) {
   config.set({
     basePath: '.',
-    frameworks: ['jasmine', 'commonjs'],
+    frameworks: ['jasmine'],
     singleRun: true,
     captureConsole: true,
     plugins: [
-      'karma-babel-preprocessor',
-      'karma-commonjs',
       'karma-chrome-launcher',
       'karma-firefox-launcher',
-      'karma-jasmine'
+      'karma-jasmine',
+      'karma-webpack',
+      'karma-sourcemap-loader',
     ],
     browsers: ['Chrome', 'Firefox'],
-    files: ['dist/syncClient.min.js', 'test/helpers.js', 'test/integration/*_spec.js'],
+    files: ['src/**/*.js', 'test/integration/*.spec.js'],
     preprocessors: {
-      'dist/syncClient.min.js': ['commonjs'],
-      'test/**/*.js': ['babel', 'commonjs']
+      'src/**/*.js': ['webpack', 'sourcemap'],
+      'test/**/*.js': ['webpack', 'sourcemap'],
     },
-    babelPreprocessor: {
-      options: {
-        presets: ['es2015']
-      }
-    }
+    webpack: webpackConfig,
+    webpackMiddleware: {
+      stats: 'errors-only',
+    },
+    reporters: ['progress'],
   });
 };

@@ -1,49 +1,32 @@
 'use strict';
-const isparta = require('isparta');
-module.exports = function(config) {
+
+const webpackConfig = require('./webpack.dev.config');
+
+webpackConfig.entry = undefined;
+webpackConfig.output = undefined;
+
+module.exports = function (config) {
   config.set({
     basePath: '.',
-    frameworks: ['jasmine-ajax', 'jasmine', 'commonjs'],
+    frameworks: ['jasmine'],
     singleRun: true,
     captureConsole: true,
     plugins: [
-      'karma-babel-preprocessor',
       'karma-chrome-launcher',
-      'karma-commonjs',
-      'karma-coverage',
-      'karma-firefox-launcher',
       'karma-jasmine',
-      'karma-jasmine-ajax'
+      'karma-webpack',
+      'karma-sourcemap-loader',
     ],
-    browsers: ['Chrome', 'Firefox'],
-    files: ['test/indexeddb_mock.js', 'src/**/*.js', 'test/unit/*_spec.js'],
+    browsers: ['Chrome'],
+    files: ['src/**/*.js', 'test/unit/*.spec.js'],
     preprocessors: {
-      'src/**/*.js': ['coverage', 'commonjs'],
-      'test/**/*.js': ['babel', 'commonjs']
+      'src/**/*.js': ['webpack', 'sourcemap'],
+      'test/**/*.js': ['webpack', 'sourcemap'],
     },
-    babelPreprocessor: {
-      options: {
-        presets: ['es2015']
-      }
+    webpack: webpackConfig,
+    webpackMiddleware: {
+      stats: 'errors-only',
     },
-    reporters: ['progress', 'coverage'],
-    // optionally, configure the reporter
-    coverageReporter: {
-      type: 'html',
-      dir: 'coverage/',
-      instrumenters: {
-        isparta
-      },
-      instrumenter: {
-        '**/*.js': 'isparta'
-      },
-      instrumenterOptions: {
-        isparta: {
-          babel: {
-            presets: 'es2015'
-          }
-        }
-      }
-    }
+    reporters: ['progress'],
   });
 };
