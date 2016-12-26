@@ -7,6 +7,7 @@ import initSyncClient from '../../src/sync_client';
 describe('SyncClient', () => {
   const Syncable = {
     StatusTexts: Dexie.Syncable.StatusTexts,
+    Statuses: Dexie.Syncable.Statuses,
     registerSyncProtocol: jasmine.createSpy('register sync protocol spy'),
   };
   const syncable = {
@@ -18,6 +19,8 @@ describe('SyncClient', () => {
     constructor() {
       this.syncable = syncable;
     }
+
+    on() {}
   }
   MyDexie.prototype.version = jasmine.createSpy('version spy')
       .and.returnValue({ stores: storesSpy });
@@ -79,13 +82,14 @@ describe('SyncClient', () => {
       syncClient.urls.push(url);
 
       syncClient.disconnect(url)
-          .then(() => {
-            expect(syncable.disconnect).toHaveBeenCalledWith(url);
-            expect(syncClient.urls).toEqual([url]);
-            done();
-          })
-          .catch((e) => {
-            done(e);
+          .catch(() => {
+            try {
+              expect(syncable.disconnect).toHaveBeenCalledWith(url);
+              expect(syncClient.urls).toEqual([url]);
+              done();
+            } catch (e) {
+              done(e);
+            }
           });
     });
   });
@@ -122,14 +126,15 @@ describe('SyncClient', () => {
       syncClient.statusChangeListeners[url] = 'foo';
 
       syncClient.removeUrl(url)
-          .then(() => {
-            expect(syncable.delete).toHaveBeenCalledWith(url);
-            expect(syncClient.urls).toEqual([url]);
-            expect(syncClient.statusChangeListeners[url]).toBe('foo');
-            done();
-          })
-          .catch((e) => {
-            done(e);
+          .catch(() => {
+            try {
+              expect(syncable.delete).toHaveBeenCalledWith(url);
+              expect(syncClient.urls).toEqual([url]);
+              expect(syncClient.statusChangeListeners[url]).toBe('foo');
+              done();
+            } catch (e) {
+              done(e);
+            }
           });
     });
   });
