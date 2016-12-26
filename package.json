@@ -40,9 +40,10 @@
     "publish-please": "publish-please",
     "prepublish": "publish-please guard"
   },
-  "description": "Module which uses IndexedDB to save data and can later use a server to synchronize the data in the database with other devices",
+  "description": "Module which uses Dexie to save data and can later use a server to synchronize the data in the database with other devices",
   "keywords": [
     "IndexedDB",
+    "Dexie",
     "offline",
     "synchronization"
   ],
