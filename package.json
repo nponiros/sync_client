@@ -26,18 +26,19 @@
     "karma-jasmine": "1.1.0",
     "karma-sourcemap-loader": "0.3.7",
     "karma-webpack": "1.8.1",
+    "publish-please": "2.2.0",
     "webpack": "^2.1.0-beta.28"
   },
   "scripts": {
     "build:dev": "webpack --config webpack.dev.config.js",
     "build:prod": "webpack --config webpack.prod.config.js",
-    "prepublish": "npm run lint && npm test && npm run build:dev && npm run build:prod",
-    "pretest": "npm run build:prod && node ./test/test_server.js start &",
-    "test": "npm run test:unit && npm run test:integration; node ./test/test_server.js stop",
+    "test": "npm run lint && npm run test:unit",
     "test:unit": "karma start karma-unit.conf.js",
     "test:integration": "karma start karma-integration.conf.js",
     "lint": "eslint --config .eslintrc 'src/**/*.js' 'test/**/*.js'",
-    "lint:fix": "eslint --fix --config .eslintrc 'src/**/*.js' 'test/**/*.js'"
+    "lint:fix": "eslint --fix --config .eslintrc 'src/**/*.js' 'test/**/*.js'",
+    "publish-please": "publish-please",
+    "prepublish": "publish-please guard"
   },
   "description": "Module which uses IndexedDB to save data and can later use a server to synchronize the data in the database with other devices",
   "keywords": [
