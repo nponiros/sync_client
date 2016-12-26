@@ -135,14 +135,9 @@ export default function initSyncClient({
     getID() { return SyncClient.getID(); }
   }
 
-  SyncClient.statuses = {
-    ERROR: 'ERROR',
-    OFFLINE: 'OFFLINE',
-    CONNECTING: 'CONNECTING',
-    ONLINE: 'ONLINE',
-    SYNCING: 'SYNCING',
-    ERROR_WILL_RETRY: 'ERROR_WILL_RETRY',
-  };
+  SyncClient.statuses = Object
+      .keys(Dexie.Syncable.Statuses)
+      .reduce((statuses, statusKey) => Object.assign(statuses, { [statusKey]: statusKey }), {});
 
   return SyncClient;
 }
