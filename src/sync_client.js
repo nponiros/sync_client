@@ -10,7 +10,7 @@ export default function initSyncClient({
   onlineStatusChanged,
   cuid,
 }) {
-  return class SyncClient extends Dexie {
+  class SyncClient extends Dexie {
     /*
      * dbName: string, name for the database
      * dbVersions: {version: number, stores: Array<Dexie.SchemaDefinition>}
@@ -36,6 +36,10 @@ export default function initSyncClient({
       });
     }
 
+    static getID() {
+      return cuid();
+    }
+
     _connect(url, options) {
       return this.syncable
           .connect(SYNCABLE_PROTOCOL, url, options)
@@ -54,25 +58,30 @@ export default function initSyncClient({
       // Setup onlineStatusChanged
       // Check isOnline before trying to connect using Dexie.Syncable
       if (this.urls.indexOf(url) === -1) {
-        this.urls.push(url);
         this.options[url] = Object.assign({}, options, defaultSyncOptions);
-
-        onlineStatusChanged(url, (newStatus) => {
-          if (newStatus) {
-            this._connect(url, this.options[url]);
-          } else {
-            this.disconnect(url);
-          }
-        });
 
         return isOnline(url)
             .then((status) => {
               if (status) {
-                return this._connect(url, this.options[url]);
+                return this._connect(url, this.options[url])
+                    .then(() => {
+                      // Make sure we managed to connect before adding URL
+                      // and listener
+                      this.urls.push(url);
+
+                      onlineStatusChanged(url, (newStatus) => {
+                        if (newStatus) {
+                          this._connect(url, this.options[url]);
+                        } else {
+                          this.disconnect(url);
+                        }
+                      });
+                    });
               }
               return Promise.reject(new Error('Is not online'));
             });
       }
+      return Promise.resolve();
     }
 
     disconnect(url) {
@@ -87,8 +96,9 @@ export default function initSyncClient({
     }
 
     removeUrl(url) {
-      this.syncable.delete(url)
+      return this.syncable.delete(url)
           .then(() => {
+            this.urls = this.urls.filter((u) => u !== url);
             this.statusChangeListeners[url] = undefined;
           })
           // TODO tell user about the error
@@ -105,7 +115,7 @@ export default function initSyncClient({
      * Returns a Promise<Array<{url, status}>>
      */
     getStatuses() {
-      this.syncable
+      return this.syncable
           .list()
           .then((urls) => {
             const promises = urls.map((url) => this.syncable.getStatus(url));
@@ -122,8 +132,17 @@ export default function initSyncClient({
           });
     }
 
-    getID() {
-      return cuid();
-    }
+    getID() { return SyncClient.getID(); }
+  }
+
+  SyncClient.statuses = {
+    ERROR: 'ERROR',
+    OFFLINE: 'OFFLINE',
+    CONNECTING: 'CONNECTING',
+    ONLINE: 'ONLINE',
+    SYNCING: 'SYNCING',
+    ERROR_WILL_RETRY: 'ERROR_WILL_RETRY',
   };
+
+  return SyncClient;
 }

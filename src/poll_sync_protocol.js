@@ -1,3 +1,7 @@
+/*
+ * Implementation of the ISyncProtocol
+ * https://github.com/dfahlander/Dexie.js/wiki/Dexie.Syncable.ISyncProtocol
+ */
 export default function initSync(serverComm, isOnline) {
   return function sync(
     context,
