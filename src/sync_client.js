@@ -43,9 +43,9 @@ export default function initSyncClient({
     _connect(url, options) {
       return this.syncable
           .connect(SYNCABLE_PROTOCOL, url, options)
-          // TODO need to tell the user what the error was
-          .catch((e) => {
-            console.log(e);
+          .catch((e) => { // disconnect when onError is called
+            this.disconnect(url);
+            throw e;
           });
     }
 
@@ -88,10 +88,6 @@ export default function initSyncClient({
       return this.syncable.disconnect(url)
           .then(() => {
             this.urls = this.urls.filter((u) => u !== url);
-          })
-          // TODO tell user what the error was
-          .catch((e) => {
-            console.error(e);
           });
     }
 
@@ -100,10 +96,6 @@ export default function initSyncClient({
           .then(() => {
             this.urls = this.urls.filter((u) => u !== url);
             this.statusChangeListeners[url] = undefined;
-          })
-          // TODO tell user about the error
-          .catch((e) => {
-            console.error(e);
           });
     }
 
@@ -125,10 +117,6 @@ export default function initSyncClient({
                 status: Dexie.Syncable.StatusTexts[statuses[index]],
               }));
             });
-          })
-          // TODO tell user about the error
-          .catch((e) => {
-            console.error(e);
           });
     }
 
