@@ -15,7 +15,7 @@ npm install --save sync-client
 ## Basic Usage
 
 ```js
-import SyncClient from 'syncClient';
+import SyncClient from 'sync-client';
 // SyncClient is a subclass of Dexie
 
 const databaseName = 'testDB'; // The name for the indexedDB database
