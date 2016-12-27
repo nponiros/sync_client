@@ -6,9 +6,9 @@ module.exports = {
   devtool: 'source-map',
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'syncClient.js',
+    filename: 'sync-client.js',
     libraryTarget: 'commonjs2',
-    library: 'syncClient.js',
+    library: 'sync-client.js',
   },
   module: {
     rules: [
