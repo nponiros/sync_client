@@ -12,4 +12,4 @@
         - javascript
   ratings:
     paths:
-    - "**.js"
+    - "src/**.js"
