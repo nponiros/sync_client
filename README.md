@@ -85,6 +85,7 @@ __Parameters__:
 * url: The server URL to connect to
 * options: Object. Currently supported options:
   * pollInterval: Number in milliseconds telling the client how often it should sync with the server. Default value is `10000`
+  * credentials: one of `'omit'` or `'include'`. Default value is 'omit'. You can find more information about the credentials option on the [Fetch API page](https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch). The `'include'` value only works if the server supports the `Access-Control-Allow-Credentials` header.
 
 __Returns__:
 

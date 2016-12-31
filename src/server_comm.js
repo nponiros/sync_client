@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-fetch';
 
-export default function serverComm(url, data) {
+export default function serverComm(url, data, options) {
   const headers = new Headers();
   headers.set('Content-Type', 'application/json');
   const opts = {
@@ -8,7 +8,7 @@ export default function serverComm(url, data) {
     method: 'POST',
     body: JSON.stringify(data),
     mode: 'cors',
-    credentials: 'include',
+    credentials: options.credentials,
   };
   return fetch(url, opts)
     .then((response) => {

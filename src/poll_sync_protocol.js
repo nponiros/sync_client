@@ -25,7 +25,7 @@ export default function initSync(serverComm, isOnline) {
       syncedRevision,
     };
 
-    serverComm(url, request)
+    serverComm(url, request, options)
         .then((data) => {
           if (!data.success) {
             // Server didn't accept our changes. Stop trying to sync

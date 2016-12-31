@@ -1,6 +1,7 @@
 const SYNCABLE_PROTOCOL = 'sync_client_protocol';
 const defaultSyncOptions = {
   pollInterval: 10000, // Poll every 10 seconds
+  credentials: 'omit',
 };
 
 export default function initSyncClient({
