@@ -42,6 +42,7 @@ module.exports = {
       output: {
         comments: false,
       },
+      sourceMap: true,
     }),
     new webpack.DefinePlugin({
       'process.env': { NODE_ENV: JSON.stringify('production') },
