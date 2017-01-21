@@ -193,6 +193,7 @@ describe('SyncClient', () => {
             expect(syncClient.options[url]).toEqual({
               foo: 'bar',
               pollInterval: 10000,
+              credentials: 'omit',
             });
             expect(onlineStatusChangedSpy).toHaveBeenCalled();
             done();
@@ -296,7 +297,7 @@ describe('SyncClient', () => {
             syncClient._connect.calls.reset();
             cb(true);
             expect(syncClient._connect)
-                .toHaveBeenCalledWith(url, { foo: 'bar', pollInterval: 10000 });
+              .toHaveBeenCalledWith(url, { foo: 'bar', pollInterval: 10000, credentials: 'omit' });
             done();
           })
           .catch((e) => {
