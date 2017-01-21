@@ -3,7 +3,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 Please not that there was no stable release yet and things may break at any time
 
-## [1.0.0-beta.2] - 2017-01-21
+## [1.0.0-beta.3] - 2017-01-21
 
 * Add credentials option for connect
 * package.json main now points to the dist file
