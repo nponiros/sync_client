@@ -9,5 +9,5 @@
   },
   "confirm": true,
   "publishTag": "latest",
-  "prePublishScript": "npm test && npm run build:dev && npm run build:prod"
+  "prePublishScript": "npm run build"
 }
