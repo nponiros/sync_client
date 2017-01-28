@@ -31,12 +31,13 @@ const syncClient = new SyncClient(databaseName, versions);
 
 ## API
 
-### constructor(dbName, versions)
+### constructor(dbName, versions, partialsThreshold)
 
 __Parameters__:
 
 * dbName: The name of the IndexedDB database
-* versions: An array of objects with `version` and `stores` as key. The `version` must be an integer and the `stores` an object in the form of a [Dexie Store](https://github.com/dfahlander/Dexie.js/wiki/Version.stores()). You can optionally pass an `upgrader` function for each store to be used with [Version.upgrade](https://github.com/dfahlander/Dexie.js/wiki/Version.upgrade()).
+* versions: An array of objects with `version` and `stores` as key. The `version` must be an integer and the `stores` an object in the form of a [Dexie Store](https://github.com/dfahlander/Dexie.js/wiki/Version.stores()). You can optionally pass an `upgrader` function for each store to be used with [Version.upgrade](https://github.com/dfahlander/Dexie.js/wiki/Version.upgrade())
+* partialsThreshold: This is an optional parameter and define the maximum number of changes we will send at once. If for example the threshold is set to 10 and we have 20 changes, dexie-syncable will send to requests each with 10 changes. Default value is `Infinity`
 
 __Return__:
 

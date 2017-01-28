@@ -19,7 +19,7 @@ export default function initSyncClient({
      * dbVersions: {version: number, stores: Array<Dexie.SchemaDefinition>}
      * https://github.com/dfahlander/Dexie.js/wiki/Version.stores()
      */
-    constructor(dbName, dbVersions) {
+    constructor(dbName, dbVersions, partialsThreshold) {
       super(dbName, { addons: [syncable, observable] });
       dbVersions.forEach((version) => {
         if (version.upgrader) {
@@ -29,7 +29,7 @@ export default function initSyncClient({
         }
       });
 
-      Dexie.Syncable.registerSyncProtocol(SYNCABLE_PROTOCOL, { sync });
+      Dexie.Syncable.registerSyncProtocol(SYNCABLE_PROTOCOL, { sync, partialsThreshold });
 
       this.options = {};
       this.urls = [];

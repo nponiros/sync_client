@@ -43,13 +43,13 @@ describe('SyncClient', () => {
     it('should setup stores, register the protocol and setup statusChanged', () => {
       const dbName = 'myDB';
       const versions = [{ version: 1, stores: { foo: 'id' } }];
-      new SyncClient(dbName, versions); // eslint-disable-line no-new
+      new SyncClient(dbName, versions, 10); // eslint-disable-line no-new
 
       expect(MyDexie.prototype.version).toHaveBeenCalledWith(1);
       expect(storesSpy).toHaveBeenCalledWith({ foo: 'id' });
       expect(syncable.on.calls.argsFor(0)[0]).toBe('statusChanged');
       expect(Syncable.registerSyncProtocol)
-          .toHaveBeenCalledWith('sync_client_protocol', { sync: syncFn });
+          .toHaveBeenCalledWith('sync_client_protocol', { sync: syncFn, partialsThreshold: 10 });
     });
   });
 
