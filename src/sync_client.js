@@ -6,6 +6,8 @@ const defaultSyncOptions = {
 
 export default function initSyncClient({
   Dexie,
+  observable,
+  syncable,
   sync,
   isOnline,
   onlineStatusChanged,
@@ -18,7 +20,7 @@ export default function initSyncClient({
      * https://github.com/dfahlander/Dexie.js/wiki/Version.stores()
      */
     constructor(dbName, dbVersions) {
-      super(dbName);
+      super(dbName, { addons: [syncable, observable] });
       dbVersions.forEach((version) => {
         this.version(version.version).stores(version.stores);
       });
