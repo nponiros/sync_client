@@ -37,7 +37,6 @@ export default function initSync(serverComm, isOnline) {
               context.clientIdentity = data.clientIdentity;
               context.save()
                   .then(() => {
-                    // TODO: we would have to catch an error here and not continue
                     applyRemoteChanges(data.changes, data.currentRevision, data.partial, false);
                     onChangesAccepted();
                     onSuccess({ again: options.pollInterval });
@@ -49,7 +48,6 @@ export default function initSync(serverComm, isOnline) {
               // This is a subsequent call.
               // We already have a clientIdentity so we can just schedule the next call
             } else {
-              // TODO: we would have to catch an error here and not continue
               applyRemoteChanges(data.changes, data.currentRevision, data.partial, false);
               onChangesAccepted();
               onSuccess({ again: options.pollInterval });
