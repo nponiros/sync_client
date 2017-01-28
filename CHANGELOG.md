@@ -3,6 +3,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 Please not that there was no stable release yet and things may break at any time
 
+## [] - Not released
+
+* Support upgrade functions. Closes: [#1](https://github.com/nponiros/sync_client/issues/1)
+* Configurable partialsThreshold. Closes: [#2](https://github.com/nponiros/sync_client/issues/2)
+
 ## [1.0.0-beta.5] - 2017-01-22
 
 * Fix publish scripts
