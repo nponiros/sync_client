@@ -22,7 +22,11 @@ export default function initSyncClient({
     constructor(dbName, dbVersions) {
       super(dbName, { addons: [syncable, observable] });
       dbVersions.forEach((version) => {
-        this.version(version.version).stores(version.stores);
+        if (version.upgrader) {
+          this.version(version.version).stores(version.stores).upgrade(version.upgrader);
+        } else {
+          this.version(version.version).stores(version.stores);
+        }
       });
 
       Dexie.Syncable.registerSyncProtocol(SYNCABLE_PROTOCOL, { sync });

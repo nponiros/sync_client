@@ -36,11 +36,35 @@ const syncClient = new SyncClient(databaseName, versions);
 __Parameters__:
 
 * dbName: The name of the IndexedDB database
-* versions: An array of objects with `version` and `stores` as key. The `version` must be an integer and the `stores` an object in the form of a [Dexie Store](https://github.com/dfahlander/Dexie.js/wiki/Version.stores()) 
+* versions: An array of objects with `version` and `stores` as key. The `version` must be an integer and the `stores` an object in the form of a [Dexie Store](https://github.com/dfahlander/Dexie.js/wiki/Version.stores()). You can optionally pass an `upgrader` function for each store to be used with [Version.upgrade](https://github.com/dfahlander/Dexie.js/wiki/Version.upgrade()).
 
 __Return__:
 
 A SyncClient instance. Via this instance you can access all methods of a Dexie instance. More information can be found in the [Dexie API Reference](https://github.com/dfahlander/Dexie.js/wiki/API%20Reference)
+
+__Example__:
+
+```js
+import SyncClient from 'sync-client';
+
+const dbVersions = [
+    {
+      version: 1,
+      stores: {
+        todos: 'id'
+      }
+    },
+    {
+      version: 2,
+      stores: {
+        todos: 'id, tags'
+      },
+      upgrader(transaction) { ... }
+    }
+]
+
+const syncClient = new SyncClient('MyTodosDB', dbVersions);
+```
 
 ### Static Methods
 
