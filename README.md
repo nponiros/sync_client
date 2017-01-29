@@ -173,6 +173,20 @@ __Returns__:
 
 A Promise which resolves with an array of `{url: string, status: SyncClient.statuses}` object. The promise is rejected if we failed to get the statuses.
 
+#### getStatus(url)
+
+__Description__:
+
+This method can be used to get the text status for one URL.
+
+__Parameters__:
+
+* url: The URL for which we want the status for
+
+__Returns__:
+
+A Promise which resolves with a status of type `SyncClient.statuses`. The promise is rejected if we fail to get the status.
+
 ### Static Properties
 
 #### statuses

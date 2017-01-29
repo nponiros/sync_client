@@ -127,6 +127,14 @@ export default function initSyncClient({
           });
     }
 
+    getStatus(url) {
+      return this.syncable
+          .getStatus(url)
+          .then((status) => {
+            return Dexie.Syncable.StatusTexts[status];
+          });
+    }
+
     getID() { return SyncClient.getID(); }
   }
 
