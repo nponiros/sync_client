@@ -20,7 +20,7 @@ export default function initSyncClient({
      * https://github.com/dfahlander/Dexie.js/wiki/Version.stores()
      */
     constructor(dbName, dbVersions, partialsThreshold) {
-      super(dbName, { addons: [syncable, observable] });
+      super(dbName, { addons: [observable, syncable] });
       dbVersions.forEach((version) => {
         if (version.upgrader) {
           this.version(version.version).stores(version.stores).upgrade(version.upgrader);
