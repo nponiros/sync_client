@@ -3,6 +3,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 Please not that there was no stable release yet and things may break at any time
 
+## [1.0.0-beta.9] - 2017-06-03
+
+* Allow the user to pass additional addons for Dexie. Closes: [#5](https://github.com/nponiros/sync_client/issues/5). This is a breaking change in case the partialsThreshold is defined. See the README on how to pass the addons and/or partialsThreshold
+
 ## [1.0.0-beta.8] - 2017-02-05
 
 * Support upgrade functions. Closes: [#1](https://github.com/nponiros/sync_client/issues/1)
