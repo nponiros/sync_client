@@ -16,7 +16,7 @@ describe('SyncClient', () => {
 
   const storesSpy = jasmine.createSpy('stores spy');
   class MyDexie {
-    constructor() {
+    constructor(...args) {
       this.syncable = syncable;
     }
 
@@ -43,7 +43,10 @@ describe('SyncClient', () => {
     it('should setup stores, register the protocol and setup statusChanged', () => {
       const dbName = 'myDB';
       const versions = [{ version: 1, stores: { foo: 'id' } }];
-      new SyncClient(dbName, versions, 10); // eslint-disable-line no-new
+      const opts = {
+        partialsThreshold: 10,
+      };
+      new SyncClient(dbName, versions, opts); // eslint-disable-line no-new
 
       expect(MyDexie.prototype.version).toHaveBeenCalledWith(1);
       expect(storesSpy).toHaveBeenCalledWith({ foo: 'id' });

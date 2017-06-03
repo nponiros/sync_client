@@ -19,8 +19,8 @@ export default function initSyncClient({
      * dbVersions: {version: number, stores: Array<Dexie.SchemaDefinition>}
      * https://github.com/dfahlander/Dexie.js/wiki/Version.stores()
      */
-    constructor(dbName, dbVersions, partialsThreshold) {
-      super(dbName, { addons: [observable, syncable] });
+    constructor(dbName, dbVersions, opts = {}) {
+      super(dbName, { addons: [observable, syncable, ...(opts.addons ? opts.addons : [])] });
       dbVersions.forEach((version) => {
         if (version.upgrader) {
           this.version(version.version).stores(version.stores).upgrade(version.upgrader);
@@ -29,7 +29,11 @@ export default function initSyncClient({
         }
       });
 
-      Dexie.Syncable.registerSyncProtocol(SYNCABLE_PROTOCOL, { sync, partialsThreshold });
+      const protocolImplementation = {
+        sync,
+        partialsThreshold: opts.partialsThreshold,
+      };
+      Dexie.Syncable.registerSyncProtocol(SYNCABLE_PROTOCOL, protocolImplementation);
 
       this.options = {};
       this.urls = [];
