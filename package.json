@@ -50,7 +50,7 @@
   ],
   "main": "dist/sync-client.js",
   "dependencies": {
-    "dexie": "2.0.1",
+    "dexie": "2.x.x",
     "dexie-observable": "1.0.0-beta.4",
     "dexie-syncable": "1.0.0-beta.4",
     "isomorphic-fetch": "2.2.1"

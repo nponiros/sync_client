@@ -3,6 +3,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 Please not that there was no stable release yet and things may break at any time
 
+## [1.0.0-beta.11] - 2018-04-21
+
+* Use a more inclusive dexie version and allow all minor and patch versions
+
 ## [1.0.0-beta.10] - 2018-01-23
 
 * Update dexie to 2.0.1 and dexie-observable/dexie-syncable to 1.0.0-beta.4
