@@ -35,7 +35,7 @@ function safeCounter() {
 const cache = (function calc() {
   let count = 0;
 
-  for (const i in window) {
+  for (const i in self) {
     count++;
   }
 

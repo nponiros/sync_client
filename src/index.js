@@ -7,7 +7,7 @@ import initSync from './poll_sync_protocol';
 import initConnectionStatus from './connection_status';
 import serverComm from './server_comm';
 
-const { isOnline, onlineStatusChanged } = initConnectionStatus(window);
+const { isOnline, onlineStatusChanged } = initConnectionStatus(self);
 
 const sync = initSync(serverComm, isOnline);
 
